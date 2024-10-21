@@ -11,7 +11,7 @@ public class Main extends Game {
         Gdx.graphics.setContinuousRendering(false);
         Gdx.graphics.requestRendering();
 
-        this.setScreen(new DiceMode());
+        this.setScreen(new DiceMode(this));
     }
 
     @Override

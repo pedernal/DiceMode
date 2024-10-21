@@ -1,16 +1,28 @@
 package pedernal.github.dicemode;
 
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.utils.Disposable;
+
 import java.util.Random;
 
-public class Dice {
+public class Dice extends Actor implements Disposable {
     private int numberOfFaces;
-    private Random randomGenerator = new Random();
+    private int memory;
+    private final Random randomGenerator = new Random();
+    private BitmapFont font;
 
-    public Dice() {
-        this.numberOfFaces = 6;
-    }
+
     public Dice(int numberOfFaces) {
         this.numberOfFaces = numberOfFaces;
+        this.memory = numberOfFaces;
+        this.font = new BitmapFont();
+    }
+
+    @Override
+    public void draw(Batch batch, float parentAlpha) {
+        font.draw(batch, Integer.toString(getMemory()), this.getX()-font.getScaleX(), this.getY()+this.getHeight());
     }
 
     public void setNumberOfFaces(int numberOfFaces) {
@@ -18,6 +30,16 @@ public class Dice {
     }
 
     public int roll() {
-        return randomGenerator.nextInt(numberOfFaces)+1;
+        memory = randomGenerator.nextInt(numberOfFaces)+1;
+        return memory;
+    }
+
+    public int getMemory() {
+        return memory;
+    }
+
+    @Override
+    public void dispose() {
+        font.dispose();
     }
 }
