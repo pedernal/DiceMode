@@ -25,10 +25,6 @@ public class Dice extends Actor implements Disposable {
         font.draw(batch, Integer.toString(getMemory()), this.getX()-font.getScaleX(), this.getY()+this.getHeight());
     }
 
-    public void setNumberOfFaces(int numberOfFaces) {
-        this.numberOfFaces = numberOfFaces;
-    }
-
     public int roll() {
         memory = randomGenerator.nextInt(numberOfFaces)+1;
         return memory;
