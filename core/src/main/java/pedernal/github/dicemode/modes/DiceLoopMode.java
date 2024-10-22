@@ -11,8 +11,8 @@ public class DiceLoopMode extends Mode {
     public DiceLoopMode(Game mainProgram) {
         super(mainProgram);
 
-        diceLoop = new DiceLoop(6, 4);
-        diceLoop.setBounds(0, 0, 10, 10);
+        diceLoop = new DiceLoop(6, 6);
+        diceLoop.setBounds(0, 0, 50, 10);
         diceLoop.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) { return true; }
@@ -22,10 +22,5 @@ public class DiceLoopMode extends Mode {
 
         });
         super.getTable().add(diceLoop);
-    }
-
-    @Override
-    public void render(float v) {
-        super.render(v);
     }
 }

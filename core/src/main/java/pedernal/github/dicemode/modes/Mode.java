@@ -17,7 +17,7 @@ public abstract class Mode implements Screen {
     public Mode(Game mainProgram)
     {
         this.mainProgram = mainProgram;
-        stage = new Stage(new FitViewport(60, 90));
+        stage = new Stage(new FitViewport(120, 180));
         Gdx.input.setInputProcessor(stage);
 
         table = new Table();
@@ -69,6 +69,7 @@ public abstract class Mode implements Screen {
     {
         return stage;
     }
+
     public Table getTable()
     {
         return table;

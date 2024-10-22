@@ -41,7 +41,7 @@ public class DiceLoop extends Actor implements Disposable {
     @Override
     public void draw(Batch batch, float parentAlpha) {
         AtomicInteger line = new AtomicInteger(Math.round( this.getY() )); //safer way to mutate/increment a variable/counter in a function call or thread
-        font.draw(batch, String.valueOf(total), this.getX()-getScaleX(), this.getY()+this.getHeight());
+        font.draw(batch, "Total: "+ total, this.getX()-getScaleX(), this.getY()+this.getHeight());
         memory.forEach((element) -> {
             font.draw(batch, element.toString(), this.getX()-(getScaleX()*2), line.getAndSet(line.get()-11));
         });
