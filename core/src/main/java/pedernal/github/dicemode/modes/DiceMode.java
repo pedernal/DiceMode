@@ -5,7 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import pedernal.github.dicemode.Dice;
 
-public class DiceMode extends Mode {
+public class DiceMode extends AbstractMode {
     private Game mainProgram;
     private Dice d6;
 

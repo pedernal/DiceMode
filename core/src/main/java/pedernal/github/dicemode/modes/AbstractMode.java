@@ -9,12 +9,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
-public abstract class Mode implements Screen {
+public abstract class AbstractMode implements Screen {
     private Game mainProgram;
     private Stage stage;
     private Table table;
 
-    public Mode(Game mainProgram)
+    public AbstractMode(Game mainProgram)
     {
         this.mainProgram = mainProgram;
         stage = new Stage(new FitViewport(120, 180));
@@ -61,17 +61,9 @@ public abstract class Mode implements Screen {
     }
 
     @Override
-    public void dispose() {
-        stage.dispose();
-    }
+    public void dispose() { stage.dispose(); }
 
-    public Stage getStage()
-    {
-        return stage;
-    }
+    public Stage getStage() { return stage; }
 
-    public Table getTable()
-    {
-        return table;
-    }
+    public Table getTable() { return table; }
 }

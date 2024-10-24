@@ -9,21 +9,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/*FIXME: this should not be an actor nor disposable!*/
+/*TODO:CONSIDER:
+*  create abstract class that extends and implements actor, for which all iterable dice objects will extend from*/
 
 public class DiceLoop extends Actor implements Disposable {
     private Dice dice;
     private int rolls;
     private List<Integer> memory;
     private int total;
-    private BitmapFont font;
 
     public DiceLoop(int faces, int rolls) {
         this.dice = new Dice(faces);
         this.rolls = rolls;
         this.memory = new ArrayList<Integer>(rolls);
         this.total = 0;
-        font = new BitmapFont();
     }
 
     public int roll() {
@@ -41,9 +40,9 @@ public class DiceLoop extends Actor implements Disposable {
     @Override
     public void draw(Batch batch, float parentAlpha) {
         AtomicInteger line = new AtomicInteger(Math.round( this.getY() )); //safer way to mutate/increment a variable/counter in a function call or thread
-        font.draw(batch, "Total: "+ total, this.getX()-getScaleX(), this.getY()+this.getHeight());
+        dice.getFont().draw(batch, "Total: "+ total, this.getX()-this.getScaleX(), this.getY()+this.getHeight());
         memory.forEach((element) -> {
-            font.draw(batch, element.toString(), this.getX()-(getScaleX()*2), line.getAndSet(line.get()-11));
+            dice.getFont().draw(batch, element.toString(), this.getX()-(getScaleX()*2), line.getAndSet(line.get()-11));
         });
     }
 
@@ -53,6 +52,6 @@ public class DiceLoop extends Actor implements Disposable {
 
     @Override
     public void dispose() {
-        font.dispose();
+        dice.getFont().dispose();
     }
 }

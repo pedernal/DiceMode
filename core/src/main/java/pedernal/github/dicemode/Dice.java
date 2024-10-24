@@ -28,6 +28,11 @@ public class Dice extends Actor implements Disposable {
     public int roll() {
         memory = randomGenerator.nextInt(numberOfFaces)+1;
         return memory;
+
+    }
+
+    public BitmapFont getFont() {
+        return this.font;
     }
 
     public int getMemory() {

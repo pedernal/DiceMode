@@ -5,7 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import pedernal.github.dicemode.DiceLoop;
 
-public class DiceLoopMode extends Mode {
+public class DiceLoopMode extends AbstractMode {
     private DiceLoop diceLoop;
 
     public DiceLoopMode(Game mainProgram) {
@@ -19,7 +19,6 @@ public class DiceLoopMode extends Mode {
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) { diceLoop.roll(); }
-
         });
         super.getTable().add(diceLoop);
     }
