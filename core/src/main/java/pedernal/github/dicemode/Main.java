@@ -2,6 +2,7 @@ package pedernal.github.dicemode;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import pedernal.github.dicemode.modes.DiceLoopMode;
 import pedernal.github.dicemode.modes.DiceUntilMode;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */

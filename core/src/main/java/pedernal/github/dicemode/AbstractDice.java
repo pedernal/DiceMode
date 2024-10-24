@@ -3,6 +3,7 @@ package pedernal.github.dicemode;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
@@ -12,6 +13,7 @@ import com.badlogic.gdx.utils.Disposable;
 public class AbstractDice extends Actor implements Disposable {
     private int total;
     private Resterizer resterizer;
+    private TextureRegion textureRegion;
 
     public AbstractDice(float x, float y, float width, float height) {
         this.total = 0;
@@ -20,6 +22,7 @@ public class AbstractDice extends Actor implements Disposable {
         super.setWidth(width);
         super.setHeight(height);
         this.resterizer = new Resterizer(Math.round(width), Math.round(height));
+        this.textureRegion = new TextureRegion( new Texture(new Pixmap(10, 10, Pixmap.Format.Alpha)) );
     }
 
     public void roll(Batch batch) {
@@ -45,6 +48,14 @@ public class AbstractDice extends Actor implements Disposable {
     public Resterizer getResterizer() {
         return this.resterizer;
     }
+
+    public void setTextureRegion(TextureRegion textureRegion) {
+        this.textureRegion = textureRegion;
+    }
+
+    public TextureRegion getTextureRegion() {
+        return this.textureRegion;
+    }
 }
 
 class Resterizer {
@@ -63,10 +74,6 @@ class Resterizer {
 
         frameBuffer.end();
 
-        return generateTextureRegion();
-    }
-
-    private TextureRegion generateTextureRegion() {
         TextureRegion toReturn = new TextureRegion(frameBuffer.getColorBufferTexture());
         toReturn.flip(false, true);
         return toReturn;

@@ -3,6 +3,7 @@ package pedernal.github.dicemode.modes;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import pedernal.github.dicemode.DiceUntil;
 
 public class DiceUntilMode extends AbstractMode {
@@ -11,8 +12,9 @@ public class DiceUntilMode extends AbstractMode {
     public DiceUntilMode(Game mainProgram) {
         super(mainProgram);
 
-        diceUntil = new DiceUntil(6, 1, 0, 0, this.getStage().getViewport().getScreenWidth()/7, this.getStage().getViewport().getScreenHeight()/7);
-        diceUntil.setBounds(0, 0, 50, 10);
+        Viewport parentViewport = super.getStage().getViewport();
+        diceUntil = new DiceUntil(6, 1, 0, 0, parentViewport.getScreenWidth()/7, parentViewport.getScreenHeight()/7);
+        diceUntil.setBounds(0, 0, 50, 50);
         diceUntil.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {

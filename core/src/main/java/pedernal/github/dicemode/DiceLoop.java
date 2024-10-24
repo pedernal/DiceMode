@@ -1,53 +1,67 @@
 package pedernal.github.dicemode;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/*TODO:CONSIDER:
-*  create abstract class that extends and implements actor, for which all iterable dice objects will extend from*/
-
-public class DiceLoop extends Actor implements Disposable {
+public class DiceLoop extends AbstractDice {
     private Dice dice;
     private int rolls;
     private List<Integer> memory;
-    private int total;
 
-    public DiceLoop(int faces, int rolls) {
+    public DiceLoop(int faces, int rolls, float x, float y, float width, float height) {
+        super(x, y, width, height);
         this.dice = new Dice(faces);
         this.rolls = rolls;
         this.memory = new ArrayList<Integer>(rolls);
-        this.total = 0;
     }
 
-    public int roll() {
-        memory.clear();
-        total = 0;
-
-        for (int i = 0; i < rolls; ++i) {
-            memory.add(dice.roll());
-            total += memory.getLast();
-        }
-
-        return total;
+    @Override
+    public void roll(Batch batch) {
+        populateMemory();
+        super.setTextureRegion(generateTextureRegion(batch));
     }
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        AtomicInteger line = new AtomicInteger(Math.round( this.getY() )); //safer way to mutate/increment a variable/counter in a function call or thread
-        dice.getFont().draw(batch, "Total: "+ total, this.getX()-this.getScaleX(), this.getY()+this.getHeight());
-        memory.forEach((element) -> {
-            dice.getFont().draw(batch, element.toString(), this.getX()-(getScaleX()*2), line.getAndSet(line.get()-11));
-        });
+        batch.draw(super.getTextureRegion(), super.getX(), super.getY());
     }
 
-    public int getTotal() {
-        return total;
+    private void populateMemory()
+    {
+        memory.clear();
+        super.setTotal(0);
+        for (int i = 0; i < rolls; ++i) {
+            memory.add(dice.roll());
+            addToTotal(memory.getLast());
+        }
+    }
+
+    private void addToTotal(int rollToAdd) {
+        super.setTotal(super.getTotal()+rollToAdd);
+    }
+
+    private TextureRegion generateTextureRegion(Batch batch) {
+        return super.getResterizer().resterize(() -> {
+            batch.begin();
+
+            AtomicInteger line = new AtomicInteger(Math.round( super.getY()-12 ));
+            dice.getFont().draw( batch, "Total: "+super.getTotal(), super.getX(), super.getY() );
+            memory.forEach((element) -> {
+                dice.getFont().draw(
+                    batch,
+                    element.toString(),
+                    super.getX(),
+                    line.getAndSet(line.get()-12)
+                );
+            });
+
+            batch.end();
+        });
     }
 
     @Override

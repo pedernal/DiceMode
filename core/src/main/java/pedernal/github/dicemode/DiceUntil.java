@@ -1,10 +1,7 @@
 package pedernal.github.dicemode;
 
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import org.w3c.dom.Text;
 
 import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -13,35 +10,23 @@ public class DiceUntil extends AbstractDice {
     private int target;
     private Dice dice;
     private LinkedList<Integer> memory;
-    private TextureRegion textureRegion;
 
     public DiceUntil(int faces, int target, float x, float y, int width, int height) {
         super(x, y, width, height);
         this.target = Math.min(Math.abs(target), faces);
         dice = new Dice(faces);
         memory = new LinkedList<Integer>();
-        this.textureRegion = new TextureRegion(new Texture(new Pixmap(10, 10, Pixmap.Format.RGB888)));
     }
 
     @Override
     public void roll(Batch batch) {
         populateMemory();
-        textureRegion = generateTextureRegion(batch);
+        super.setTextureRegion(generateTextureRegion(batch));
     }
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        batch.draw(this.textureRegion, super.getX(), super.getY());
-    }
-
-    @Override
-    public void dispose() {
-        dice.getFont().dispose();
-        textureRegion.getTexture().dispose();
-    }
-
-    private void addToTotal(int rollToAdd) {
-        super.setTotal(super.getTotal()+rollToAdd);
+        batch.draw(super.getTextureRegion(), super.getX(), super.getY());
     }
 
     private void populateMemory() {
@@ -54,6 +39,10 @@ public class DiceUntil extends AbstractDice {
             memory.add(currentRoll);
             addToTotal(currentRoll);
         }
+    }
+
+    private void addToTotal(int rollToAdd) {
+        super.setTotal(super.getTotal()+rollToAdd);
     }
 
     private TextureRegion generateTextureRegion(Batch batch) {
@@ -73,5 +62,11 @@ public class DiceUntil extends AbstractDice {
 
             batch.end();
         });
+    }
+
+    @Override
+    public void dispose() {
+        dice.getFont().dispose();
+        super.getTextureRegion().getTexture().dispose();
     }
 }
