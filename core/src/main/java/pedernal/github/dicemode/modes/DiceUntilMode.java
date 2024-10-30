@@ -6,26 +6,26 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import pedernal.github.dicemode.DiceUntil;
 
-public class DiceUntilMode extends AbstractMode {
-    private DiceUntil diceUntil;
+public class DiceUntilMode extends Mode {
+    private DiceUntil dice;
 
     public DiceUntilMode(Game mainProgram) {
         super(mainProgram);
 
         Viewport parentViewport = super.getStage().getViewport();
-        diceUntil = new DiceUntil(6, 1, 0, 0, parentViewport.getScreenWidth()/7, parentViewport.getScreenHeight()/7);
-        diceUntil.setBounds(0, 0, 50, 50);
-        diceUntil.addListener(new InputListener(){
+
+        dice = new DiceUntil(6, 1);
+        dice.setBounds(0, 0, 50, 50);
+        dice.setFont(getFont());
+        dice.addListener(new InputListener(){
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) { return true; }
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                diceUntil.roll(DiceUntilMode.super.getStage().getBatch());
+                dice.roll();
             }
         });
-        super.getTable().add(diceUntil);
+        super.getTable().add(dice);
     }
 }
