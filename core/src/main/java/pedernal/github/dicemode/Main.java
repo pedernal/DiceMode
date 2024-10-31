@@ -13,7 +13,7 @@ public class Main extends Game {
         Gdx.graphics.setContinuousRendering(false);
         Gdx.graphics.requestRendering();
 
-        this.setScreen(new DiceUntilMode(this));
+        this.setScreen(new DiceLoopMode(this));
     }
 
     @Override

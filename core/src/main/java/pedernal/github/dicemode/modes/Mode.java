@@ -5,8 +5,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
@@ -17,6 +23,8 @@ public class Mode implements Screen {
     private Stage stage;
     private Table table;
     private BitmapFont font;
+    private Skin skin;
+    private TextButton rollButton;
 
     public Mode(Game mainProgram)
     {
@@ -30,10 +38,18 @@ public class Mode implements Screen {
         font = fontGenerator.generateFont(parameter);
         fontGenerator.dispose();
 
+        TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("./skin/clean-crispy-ui.atlas"));
+        skin = new Skin(Gdx.files.internal("./skin/clean-crispy-ui.json"));
+        skin.addRegions(atlas);
 
         table = new Table();
         table.setFillParent(true);
         table.center();
+        table.setDebug(true); //FIXME: DELETE THIS. Only for debugging
+
+        TextButtonStyle buttonStyle = skin.get(TextButtonStyle.class);
+        rollButton = new TextButton("Roll", buttonStyle);
+        table.add(rollButton);
 
         stage.addActor(table);
     }
@@ -77,6 +93,20 @@ public class Mode implements Screen {
 
     public BitmapFont getFont () {
         return font;
+    }
+
+    public TextButton getRollButton() {
+        return rollButton;
+    }
+
+    public void pressRollButton(Runnable action) {
+        rollButton.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) { return true; }
+
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) { action.run(); }
+        });
     }
 
     @Override

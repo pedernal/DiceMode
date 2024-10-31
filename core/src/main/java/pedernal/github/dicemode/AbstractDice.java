@@ -3,6 +3,8 @@ package pedernal.github.dicemode;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.utils.Disposable;
 import java.util.List;
 import java.util.Random;
@@ -12,15 +14,16 @@ public abstract class AbstractDice extends Actor implements Disposable {
     private List<Integer> memory;
     private int total;
     private int limit;
-
     private final Random randomGenerator = new Random();
     private BitmapFont font;
+    private Skin skin;
 
 
     public AbstractDice(int numberOfFaces, int limit, List memory) {
         this.numberOfFaces = numberOfFaces;
         this.total = 0;
         this.limit = Math.min(numberOfFaces, limit);
+        font = new BitmapFont();
 
         this.memory = memory;
     }
@@ -42,8 +45,8 @@ public abstract class AbstractDice extends Actor implements Disposable {
         this.total = total;
     }
 
-    public void addToTotal(int value) {
-        total += value;
+    public void setSkin(Skin skin) {
+        this.skin = skin;
     }
 
     public int getRandomNumber() {
@@ -55,6 +58,7 @@ public abstract class AbstractDice extends Actor implements Disposable {
     }
 
     public void setFont(BitmapFont font) {
+        this.font.dispose();
         this.font = font;
     }
 
@@ -64,6 +68,14 @@ public abstract class AbstractDice extends Actor implements Disposable {
 
     public int getLimit() {
         return limit;
+    }
+
+    public Skin getSkin() {
+        return skin;
+    }
+
+    public void addToTotal(int value) {
+        total += value;
     }
 
     @Override

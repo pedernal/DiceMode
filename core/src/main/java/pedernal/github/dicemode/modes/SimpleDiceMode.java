@@ -16,15 +16,7 @@ public class SimpleDiceMode extends Mode {
         System.out.println(d6.toString());
         d6.setBounds(0, 0, 10, 10);
         d6.setFont(getFont());
-        d6.addListener(new InputListener() {
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) { return true; }
-
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                d6.roll();
-            }
-        });
         super.getTable().add(d6);
+        pressRollButton(d6::roll);
     }
 }

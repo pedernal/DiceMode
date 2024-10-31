@@ -17,15 +17,7 @@ public class DiceUntilMode extends Mode {
         dice = new DiceUntil(6, 1);
         dice.setBounds(0, 0, 50, 50);
         dice.setFont(getFont());
-        dice.addListener(new InputListener(){
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) { return true; }
-
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                dice.roll();
-            }
-        });
         super.getTable().add(dice);
+        pressRollButton(dice::roll);
     }
 }
