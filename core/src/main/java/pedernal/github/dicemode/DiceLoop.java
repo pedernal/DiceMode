@@ -10,7 +10,7 @@ public class DiceLoop extends AbstractDice{
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        getFont().draw(batch, toString(), getX()-25, getY()+50);
+        getFont().draw(batch, toString(), getX()-40, getY());
     }
 
     @Override

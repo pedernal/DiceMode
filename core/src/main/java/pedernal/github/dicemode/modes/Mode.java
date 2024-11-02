@@ -30,7 +30,7 @@ public class Mode implements Screen {
     {
         this.mainProgram = mainProgram;
         stage = new Stage(new FitViewport(120, 180));
-        FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("./UbuntuMono-Bold.ttf"));
+        FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("./NotoSansMono-Bold.ttf"));
         FreeTypeFontParameter parameter = new FreeTypeFontParameter();
         parameter.size = 17;
         parameter.shadowColor = Color.DARK_GRAY;
