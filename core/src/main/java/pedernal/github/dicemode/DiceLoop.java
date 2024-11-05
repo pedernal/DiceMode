@@ -1,22 +1,26 @@
 package pedernal.github.dicemode;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
 import java.util.ArrayList;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import pedernal.github.dicemode.utilities.DiceDispalySystem;
 
 public class DiceLoop extends AbstractDice{
-    public DiceLoop(int faces, int rolls) {
-        super(faces, Math.min(Math.abs(rolls), faces), new ArrayList<Integer>(rolls));
-    }
+    private DiceDispalySystem diceWidget;
 
-    @Override
-    public void draw(Batch batch, float parentAlpha) {
-        getFont().draw(batch, toString(), getX()-40, getY());
+    public DiceLoop(int faces, int rolls, Skin skin) {
+        super(faces, Math.min(faces, rolls), new ArrayList<Integer>(rolls), skin);
+
+        String name = "d"+faces+" x"+rolls;
+        diceWidget = new DiceDispalySystem(name, skin);
+        addActor(diceWidget);
+        diceWidget.update(formatMemoryString(), formatTotalString());
     }
 
     @Override
     public void roll() {
         setTotal(0);
         populateMemory();
+        diceWidget.update(formatMemoryString(), formatTotalString());
     }
 
     @Override

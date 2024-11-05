@@ -9,10 +9,10 @@ public class DiceLoopMode extends Mode {
     public DiceLoopMode(Game mainProgram) {
         super(mainProgram);
 
-        dice = new DiceLoop(6, 4);
-        dice.setBounds(0, 0, 50, 50);
+        dice = new DiceLoop(10, 6, getSkin());
         dice.setFont(getFont());
         getTable().add(dice);
+
         pressRollButton(dice::roll);
     }
 }

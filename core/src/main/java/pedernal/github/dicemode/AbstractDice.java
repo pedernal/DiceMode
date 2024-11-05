@@ -1,36 +1,28 @@
 package pedernal.github.dicemode;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
-import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import pedernal.github.dicemode.utilities.TriPredicate;
 import java.util.List;
 import java.util.Random;
 
-public abstract class AbstractDice extends Actor implements Disposable {
+public abstract class AbstractDice extends WidgetGroup {
     private int numberOfFaces;
     private List<Integer> memory;
     private int total;
     private int limit;
-    private final Random randomGenerator = new Random();
+    private Random randomGenerator = new Random();
     private BitmapFont font;
     private Skin skin;
+    private TriPredicate<Integer, Integer, Integer> predicate = (Integer i, Integer size, Integer element) -> true;
 
-
-    public AbstractDice(int numberOfFaces, int limit, List memory) {
+    public AbstractDice(int numberOfFaces, int limit, List<Integer> memory, Skin skin) {
         this.numberOfFaces = numberOfFaces;
-        this.total = 0;
-        this.limit = Math.min(numberOfFaces, limit);
+        total = 0;
+        this.limit = limit;
         font = new BitmapFont();
-
+        this.skin = skin;
         this.memory = memory;
-    }
-
-    @Override
-    public void draw(Batch batch, float parentAlpha) {
-        font.draw(batch, Integer.toString(0), this.getX(), this.getY());
     }
 
     public abstract void roll();
@@ -43,10 +35,6 @@ public abstract class AbstractDice extends Actor implements Disposable {
 
     public void setTotal(int total) {
         this.total = total;
-    }
-
-    public void setSkin(Skin skin) {
-        this.skin = skin;
     }
 
     public int getRandomNumber() {
@@ -78,16 +66,12 @@ public abstract class AbstractDice extends Actor implements Disposable {
         total += value;
     }
 
-    @Override
-    public void dispose() {
-    }
-
     public String formatTotalString() {
         return "Total: " + total;
     }
 
     public String formatMemoryString(int formatSpaces, TriPredicate condition, char symbol) {
-        String toReturn = "";
+        String toReturn = "\n";
 
         int size = memory.size();
         for (int i = 0; i < size; ++i) {
@@ -97,6 +81,9 @@ public abstract class AbstractDice extends Actor implements Disposable {
         }
 
         return toReturn;
+    }
+    public String formatMemoryString() {
+        return formatMemoryString(formatTotalString().length(), predicate, '+');
     }
 
     public String formatStringAll(TriPredicate condition, char symbol) {
@@ -109,8 +96,7 @@ public abstract class AbstractDice extends Actor implements Disposable {
         } else {
             int totalLength = Integer.toString(total).length();
             String formatedTotal = formatTotalString();
-            String formatedMemory = formatMemoryString(formatedTotal.length(), condition, symbol
-            );
+            String formatedMemory = formatMemoryString(formatedTotal.length(), condition, symbol);
             String line = "=";
             for (int i = 1; i < totalLength; ++i) {
                 line += "=";
@@ -125,12 +111,6 @@ public abstract class AbstractDice extends Actor implements Disposable {
 
     @Override
     public String toString() {
-        return formatStringAll((i, size, element) -> true, '+');
+        return formatStringAll(predicate, '+');
     }
 }
-
-@FunctionalInterface
-interface TriPredicate <A, B, C> {
-    public boolean test(A a, B b, C c);
-}
-

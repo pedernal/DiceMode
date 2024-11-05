@@ -1,10 +1,9 @@
 package pedernal.github.dicemode.modes;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import pedernal.github.dicemode.DiceUntil;
+import pedernal.github.dicemode.utilities.DicePart;
 
 public class DiceUntilMode extends Mode {
     private DiceUntil dice;
@@ -14,8 +13,7 @@ public class DiceUntilMode extends Mode {
 
         Viewport parentViewport = super.getStage().getViewport();
 
-        dice = new DiceUntil(6, 1);
-        dice.setBounds(0, 0, 50, 50);
+        dice = new DiceUntil(6, 1, getSkin());
         dice.setFont(getFont());
         super.getTable().add(dice);
         pressRollButton(dice::roll);

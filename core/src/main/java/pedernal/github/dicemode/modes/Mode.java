@@ -29,7 +29,7 @@ public class Mode implements Screen {
     public Mode(Game mainProgram)
     {
         this.mainProgram = mainProgram;
-        stage = new Stage(new FitViewport(120, 180));
+        stage = new Stage(new FitViewport(720, 1280));
         FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("./NotoSansMono-Bold.ttf"));
         FreeTypeFontParameter parameter = new FreeTypeFontParameter();
         parameter.size = 17;
@@ -45,7 +45,7 @@ public class Mode implements Screen {
         table = new Table();
         table.setFillParent(true);
         table.center();
-        table.setDebug(true); //FIXME: DELETE THIS. Only for debugging
+        //table.setDebug(true); //FIXME: DELETE THIS. Only for debugging
 
         TextButtonStyle buttonStyle = skin.get(TextButtonStyle.class);
         rollButton = new TextButton("Roll", buttonStyle);
@@ -87,6 +87,10 @@ public class Mode implements Screen {
 
     }
 
+    public Skin getSkin() {
+        return skin;
+    }
+
     public Stage getStage() { return stage; }
 
     public Table getTable() { return table; }
@@ -113,5 +117,6 @@ public class Mode implements Screen {
     public void dispose() {
         stage.dispose();
         font.dispose();
+        skin.dispose();
     }
 }

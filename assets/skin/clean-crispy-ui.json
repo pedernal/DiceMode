@@ -355,6 +355,7 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	default: {
 		font: font
 		fontColor: color
+		background: tooltip-c
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
