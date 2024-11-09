@@ -18,6 +18,7 @@ public class DiceDispalySystem extends VerticalGroup {
             new Label(name, this.skin))
         );
         scrollPane = new ScrollPane(new Label("", this.skin), this.skin);
+        scrollPane.setFadeScrollBars(false);
         elements.put( DicePart.BODY, new Container<Actor>(scrollPane));
         elements.put(DicePart.TOTAL, new Container<Actor>(
             new Label("Total: 0", this.skin))
@@ -35,8 +36,8 @@ public class DiceDispalySystem extends VerticalGroup {
     }
 
     public void update(String body, String total) {
-        Label labelTotal = (Label) elements.get(DicePart.TOTAL).getActor();
-        Label labelBody = (Label) ((ScrollPane) elements.get(DicePart.BODY).getActor()).getActor();
+        Label labelTotal = getElement(DicePart.TOTAL);
+        Label labelBody = getElement(DicePart.BODY);
 
         labelBody.setText(body);
         labelTotal.setText(total);

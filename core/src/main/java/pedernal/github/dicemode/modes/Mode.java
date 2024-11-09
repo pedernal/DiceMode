@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -14,9 +15,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class Mode implements Screen {
     private Game mainProgram;
@@ -29,7 +32,7 @@ public class Mode implements Screen {
     public Mode(Game mainProgram)
     {
         this.mainProgram = mainProgram;
-        stage = new Stage(new FitViewport(720, 1280));
+        stage = new Stage(new ScreenViewport(new OrthographicCamera()));
         FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("./NotoSansMono-Bold.ttf"));
         FreeTypeFontParameter parameter = new FreeTypeFontParameter();
         parameter.size = 17;
@@ -44,12 +47,10 @@ public class Mode implements Screen {
 
         table = new Table();
         table.setFillParent(true);
-        table.center();
         //table.setDebug(true); //FIXME: DELETE THIS. Only for debugging
 
         TextButtonStyle buttonStyle = skin.get(TextButtonStyle.class);
         rollButton = new TextButton("Roll", buttonStyle);
-        table.add(rollButton);
 
         stage.addActor(table);
     }
@@ -68,8 +69,8 @@ public class Mode implements Screen {
     }
 
     @Override
-    public void resize(int i, int i1) {
-        stage.getViewport().update(i, i1);
+    public void resize(int width, int height) {
+        stage.getViewport().update(width, height, true);
     }
 
     @Override

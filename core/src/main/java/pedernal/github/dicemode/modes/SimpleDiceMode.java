@@ -10,9 +10,13 @@ public class SimpleDiceMode extends Mode {
     public SimpleDiceMode(Game mainProgram) {
         super(mainProgram);
 
-        d6 = new SimpleDice(20, getSkin());
+        d6 = new SimpleDice(6, getSkin());
         d6.setFont(getFont());
-        super.getTable().add(d6);
+        getTable().add(d6);
         pressRollButton(d6::roll);
+
+        getTable().row();
+
+        getTable().add(getRollButton()).width(100).height(50);
     }
 }

@@ -3,13 +3,13 @@
 A [libGDX](https://libgdx.com/) project generated with [gdx-liftoff](https://github.com/libgdx/gdx-liftoff).
 
 This is a work in progress application to roll a dice, multiple dices and in several ways.
-This project falls under the GPL license.
+This project falls under the GPLv3 license.
 
 ## Platforms
 
 Available platforms will be:
-1. Desktop (Linux, MacOS and Windows)
-1. Mobile (Android)
+- Desktop (Linux, MacOS and Windows)
+- Mobile (Android)
 
 ## Gradle
 
@@ -28,7 +28,7 @@ This project uses [Gradle](https://gradle.org/) to manage dependencies.
 - `idea`: generates IntelliJ project data.
 - `lwjgl3:jar`: builds application's runnable jar, which can be found at `lwjgl3/build/libs`.
 - `lwjgl3:run`: starts the application.
-- `test`: runs unit tests (if any).
+- `test`: runs unit tests (not implemented yet).
 
 Note that most tasks that are not specific to a single project can be run with `name:` prefix, where the `name` should be replaced with the ID of a specific project.
 For example, `core:clean` removes `build` folder only from the `core` project.

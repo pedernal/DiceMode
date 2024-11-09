@@ -6,7 +6,7 @@ import pedernal.github.dicemode.utilities.TriPredicate;
 import java.util.List;
 import java.util.Random;
 
-public abstract class AbstractDice extends WidgetGroup {
+public abstract class AbstractDice extends Container<VerticalGroup> {
     private int numberOfFaces;
     private List<Integer> memory;
     private int total;
