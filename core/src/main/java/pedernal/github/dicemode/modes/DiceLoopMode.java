@@ -1,21 +1,19 @@
 package pedernal.github.dicemode.modes;
 
-import com.badlogic.gdx.Game;
 import pedernal.github.dicemode.DiceLoop;
+import pedernal.github.dicemode.Main.MainProgramInterface;
 
 public class DiceLoopMode extends Mode {
     private DiceLoop dice;
 
-    public DiceLoopMode(Game mainProgram) {
+    public DiceLoopMode(MainProgramInterface mainProgram) {
         super(mainProgram);
 
         dice = new DiceLoop(6, 4, getSkin());
-        dice.setFont(getFont());
-        getTable().add(dice);
         pressRollButton(dice::roll);
 
-        getTable().row();
+        getEditDiceSystem().select(dice);
 
-        getTable().add(getRollButton()).width(100).height(50);
+        setupTableLayout(() -> getTable().add(dice));
     }
 }

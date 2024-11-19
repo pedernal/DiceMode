@@ -1,10 +1,11 @@
 package pedernal.github.dicemode;
 
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import pedernal.github.dicemode.utilities.EditDiceSystem;
 import pedernal.github.dicemode.utilities.TriPredicate;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Predicate;
 
 public abstract class AbstractDice extends Container<VerticalGroup> {
     private int numberOfFaces;
@@ -12,15 +13,14 @@ public abstract class AbstractDice extends Container<VerticalGroup> {
     private int total;
     private int limit;
     private Random randomGenerator = new Random();
-    private BitmapFont font;
     private Skin skin;
     private TriPredicate<Integer, Integer, Integer> predicate = (Integer i, Integer size, Integer element) -> true;
 
     public AbstractDice(int numberOfFaces, int limit, List<Integer> memory, Skin skin) {
+        super();
         this.numberOfFaces = numberOfFaces;
         total = 0;
         this.limit = limit;
-        font = new BitmapFont();
         this.skin = skin;
         this.memory = memory;
     }
@@ -28,6 +28,8 @@ public abstract class AbstractDice extends Container<VerticalGroup> {
     public abstract void roll();
 
     public abstract void populateMemory();
+
+    public abstract void updateFrom(EditDiceSystem editDiceSystem);
 
     public int getTotal() {
         return total;
@@ -41,25 +43,38 @@ public abstract class AbstractDice extends Container<VerticalGroup> {
         return randomGenerator.nextInt(numberOfFaces)+1;
     }
 
-    public BitmapFont getFont() {
-        return this.font;
-    }
-
-    public void setFont(BitmapFont font) {
-        this.font.dispose();
-        this.font = font;
-    }
-
     public List<Integer> getMemory() {
         return memory;
     }
 
-    public int getLimit() {
-        return limit;
-    }
-
     public Skin getSkin() {
         return skin;
+    }
+
+    public int getNumberOfFaces() {
+        return numberOfFaces;
+    }
+
+    public void setNumberOfFaces(int numberOfFaces) throws IllegalArgumentException {
+        if (numberOfFaces <= 0) {
+            throw new IllegalArgumentException("A dice cannot have 0 or less faces");
+        }
+        this.numberOfFaces = numberOfFaces;
+    }
+
+    public void setLimit(int limit, Predicate<Integer> predicate) throws IllegalArgumentException {
+        if (predicate.test(limit)) {
+            throw new IllegalArgumentException("Parameter out of logical range");
+        }
+
+        this.limit = limit;
+    }
+    public void setLimit(int limit) throws IllegalArgumentException {
+        setLimit(limit, (passedLimit) -> passedLimit <= 0);
+    }
+
+    public int getLimit() {
+        return limit;
     }
 
     public void addToTotal(int value) {

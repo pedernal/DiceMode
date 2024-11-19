@@ -4,6 +4,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import pedernal.github.dicemode.utilities.EditDiceSystem;
+
 import java.util.ArrayList;
 
 public class SimpleDice extends AbstractDice {
@@ -28,9 +30,8 @@ public class SimpleDice extends AbstractDice {
         populateMemory();
         setTotal(getMemory().getFirst());
 
-        diceDisplay.getActor().clear();
         String content = String.format("%"+4+"d", getTotal());
-        diceDisplay.getActor().add(content);
+        updateDiceDisplay(content);
     }
 
     @Override
@@ -39,8 +40,24 @@ public class SimpleDice extends AbstractDice {
     }
 
     @Override
-    public String toString()
-    {
+    public void updateFrom(EditDiceSystem editDiceSystem) {
+        editDiceSystem.setUpFacesInput();
+        editDiceSystem.setUpUpdateButton(() -> {
+            int parsedInput = Integer.parseInt(editDiceSystem.getFacesInput());
+
+            setNumberOfFaces(parsedInput);
+            diceDisplay.getActor().getTitleLabel().setText("d"+parsedInput);
+            updateDiceDisplay(Integer.toString(parsedInput));
+        });
+    }
+
+    private void updateDiceDisplay(String content) {
+        diceDisplay.getActor().clear();
+        diceDisplay.getActor().add(content);
+    }
+
+    @Override
+    public String toString() {
         return formatTotalString();
     }
 }

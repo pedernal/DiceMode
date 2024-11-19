@@ -7,17 +7,20 @@ import pedernal.github.dicemode.modes.Mode;
 import pedernal.github.dicemode.modes.SimpleDiceMode;
 import pedernal.github.dicemode.modes.DiceUntilMode;
 
-/** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends Game {
-    private Mode mode;
-
     @Override
     public void create() {
         Gdx.graphics.setContinuousRendering(false);
         Gdx.graphics.requestRendering();
 
-        mode = new DiceUntilMode(this);
-        this.setScreen(mode);
+        MainProgramInterface mainProgramExp = new MainProgramInterface() {
+            @Override
+            public void switchScreen(Mode mode) {
+                Main.this.dispose();
+                Main.this.setScreen(mode);
+            }
+        };
+        this.setScreen(new DiceUntilMode(mainProgramExp));
     }
 
     @Override
@@ -26,11 +29,16 @@ public class Main extends Game {
     }
 
     @Override
-    public void resize(int height, int width) {
+    public void resize(int width, int height) {
+        getScreen().resize(width, height);
     }
 
     @Override
     public void dispose() {
-        mode.dispose();
+        getScreen().dispose();
+    }
+
+    public interface MainProgramInterface {
+        public void switchScreen(Mode mode);
     }
 }

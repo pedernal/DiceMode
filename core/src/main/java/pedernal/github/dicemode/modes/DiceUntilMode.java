@@ -1,23 +1,19 @@
 package pedernal.github.dicemode.modes;
 
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import pedernal.github.dicemode.DiceUntil;
+import pedernal.github.dicemode.Main.MainProgramInterface;
 
 public class DiceUntilMode extends Mode {
     private DiceUntil dice;
 
-    public DiceUntilMode(Game mainProgram) {
+    public DiceUntilMode(MainProgramInterface mainProgram) {
         super(mainProgram);
 
-        Viewport parentViewport = super.getStage().getViewport();
-
         dice = new DiceUntil(6, 1, getSkin());
-        dice.setFont(getFont());
         pressRollButton(dice::roll);
 
-        getTable().add(dice).expandY();
-        getTable().row();
-        getTable().add(getRollButton()).expandY().width(100).height(50);
+        getEditDiceSystem().select(dice);
+
+        setupTableLayout(() -> getTable().add(dice));
     }
 }
