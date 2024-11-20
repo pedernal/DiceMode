@@ -2,6 +2,8 @@ package pedernal.github.dicemode.utilities;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+
 import java.util.EnumMap;
 
 public class DiceDispalySystem extends VerticalGroup {
@@ -14,16 +16,23 @@ public class DiceDispalySystem extends VerticalGroup {
         this.skin = skin;
         elements = new EnumMap<DicePart, Container<Actor>>(DicePart.class);
 
+        //setting up unique style from skin for the labels' elements (adding background to these labels)
+        Drawable labelBackground = this.skin.newDrawable("tooltip-c");
+        Label.LabelStyle labelStyle = new Label.LabelStyle(this.skin.get(Label.LabelStyle.class)); //clone LabelStyle from skin
+        labelStyle.background = labelBackground;
+        labelStyle.font = this.skin.getFont("NotoMono");
+
         elements.put(DicePart.NAME, new Container<Actor>(
-            new Label(name, this.skin))
+            new Label(name, labelStyle))
         );
-        scrollPane = new ScrollPane(new Label("", this.skin), this.skin);
+        scrollPane = new ScrollPane(new Label("", labelStyle), this.skin);
         scrollPane.setFadeScrollBars(false);
-        elements.put( DicePart.BODY, new Container<Actor>(scrollPane));
+        elements.put(DicePart.BODY, new Container<Actor>(scrollPane));
         elements.put(DicePart.TOTAL, new Container<Actor>(
-            new Label("Total: 0", this.skin))
+            new Label("Total: 0", labelStyle))
         );
 
+        //setting up the height containers
         elements.values().forEach((container) -> {
             container.width(width); container.height(30);
         });
@@ -32,7 +41,7 @@ public class DiceDispalySystem extends VerticalGroup {
         elements.values().forEach((container) -> addActor(container));
     }
     public DiceDispalySystem(String name, Skin skin) {
-        this(name, skin, 100, 100);
+        this(name, skin, 130, 100);
     }
 
     public void update(String body, String total) {
@@ -45,6 +54,9 @@ public class DiceDispalySystem extends VerticalGroup {
         super.childrenChanged();
     }
 
+    /**@param label
+     * Given the enum value, returns the corresponding label that composes the dice display system
+     * */
     public Label getElement (DicePart label) {
         Label toReturn = null;
 
@@ -63,5 +75,9 @@ public class DiceDispalySystem extends VerticalGroup {
         }
 
         return toReturn;
+    }
+
+    public EnumMap<DicePart, Container<Actor>> getElements() {
+        return elements;
     }
 }

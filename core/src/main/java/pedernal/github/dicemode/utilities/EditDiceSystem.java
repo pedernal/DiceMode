@@ -42,14 +42,14 @@ public class EditDiceSystem {
     }
 
     public void setUpFacesInput() {
-        subTalbe.add(facesLabel).space(10);
+        subTalbe.add(facesLabel).height(30).space(10);
         subTalbe.add(facesInput).width(100).space(10);
         subTalbe.row();
     }
 
     public void setUpLimitInput(String str) {
         limitLabel.setText(str);
-        subTalbe.add(limitLabel).space(10);
+        subTalbe.add(limitLabel).height(30).space(10);
         subTalbe.add(limitInput).width(100).space(10);
         subTalbe.row();
     }

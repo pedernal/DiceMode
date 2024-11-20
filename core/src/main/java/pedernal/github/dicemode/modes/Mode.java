@@ -3,7 +3,6 @@ package pedernal.github.dicemode.modes;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -27,7 +26,6 @@ public class Mode implements Screen {
     private Main.MainProgramInterface mainProgram;
     private Stage stage;
     private Table table;
-    private BitmapFont font;
     private Skin skin;
     private EditDiceSystem editDiceSystem;
     private TextButton rollButton;
@@ -38,15 +36,22 @@ public class Mode implements Screen {
         stage = new Stage(new ScreenViewport());
         FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("./NotoSansMono-Bold.ttf"));
         FreeTypeFontParameter parameter = new FreeTypeFontParameter();
-        parameter.size = 17;
-        parameter.shadowColor = Color.DARK_GRAY;
-        parameter.shadowOffsetX = 2; parameter.shadowOffsetY = 2;
-        font = fontGenerator.generateFont(parameter);
-        fontGenerator.dispose();
+        parameter.size = 12;
+        parameter.color = Color.DARK_GRAY;
+        parameter.shadowColor = Color.WHITE;
+        parameter.shadowOffsetY = 2;
+        FreeTypeFontParameter parameter1 = new FreeTypeFontParameter();
+        parameter1.size = 40;
+        parameter1.color = Color.DARK_GRAY;
+        parameter1.shadowColor = Color.WHITE;
+        parameter1.shadowOffsetY = 2;
 
         TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("./skin/clean-crispy-ui.atlas"));
         skin = new Skin(Gdx.files.internal("./skin/clean-crispy-ui.json"));
         skin.addRegions(atlas);
+        skin.add("NotoMono", fontGenerator.generateFont(parameter));
+        skin.add("BigNotoMono", fontGenerator.generateFont(parameter1));
+        fontGenerator.dispose();
 
         table = new Table();
         table.setFillParent(true);
@@ -115,10 +120,6 @@ public class Mode implements Screen {
 
     public EditDiceSystem getEditDiceSystem() { return editDiceSystem; }
 
-    public BitmapFont getFont () {
-        return font;
-    }
-
     public TextButton getRollButton() {
         return rollButton;
     }
@@ -136,7 +137,6 @@ public class Mode implements Screen {
     @Override
     public void dispose() {
         stage.dispose();
-        font.dispose();
         skin.dispose();
     }
 }

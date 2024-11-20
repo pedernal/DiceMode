@@ -7,22 +7,22 @@ import pedernal.github.dicemode.utilities.DiceDispalySystem;
 import pedernal.github.dicemode.utilities.DicePart;
 
 public class DiceLoop extends AbstractDice{
-    private DiceDispalySystem diceContainer;
+    private DiceDispalySystem diceDisplay;
 
     public DiceLoop(int faces, int rolls, Skin skin) {
         super(faces, Math.min(faces, rolls), new ArrayList<Integer>(rolls), skin);
 
         String name = "d"+faces+" x"+rolls;
-        diceContainer = new DiceDispalySystem(name, skin);
-        setActor(diceContainer);
-        diceContainer.update(formatMemoryString(), formatTotalString());
+        diceDisplay = new DiceDispalySystem(name, skin);
+        diceDisplay.update(formatMemoryString(), formatTotalString());
+        setActor(diceDisplay);
     }
 
     @Override
     public void roll() {
         setTotal(0);
         populateMemory();
-        diceContainer.update(formatMemoryString(), formatTotalString());
+        diceDisplay.update(formatMemoryString(), formatTotalString());
     }
 
     @Override
@@ -46,7 +46,7 @@ public class DiceLoop extends AbstractDice{
             setNumberOfFaces(parsedFacesInput);
             setLimit(parsedRollsInput);
 
-            diceContainer.getElement(DicePart.NAME).setText("d"+getNumberOfFaces()+" x"+getLimit());
+            diceDisplay.getElement(DicePart.NAME).setText("d"+getNumberOfFaces()+" x"+getLimit());
         });
     }
 }

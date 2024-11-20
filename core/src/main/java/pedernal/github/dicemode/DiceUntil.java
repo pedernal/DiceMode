@@ -5,27 +5,25 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import pedernal.github.dicemode.utilities.EditDiceSystem;
 import pedernal.github.dicemode.utilities.DiceDispalySystem;
 import pedernal.github.dicemode.utilities.DicePart;
-
 import java.util.LinkedList;
 
 public class DiceUntil extends AbstractDice{
-    private DiceDispalySystem diceContainer;
+    private DiceDispalySystem diceDisplay;
 
     public DiceUntil(int faces, int target, Skin skin) {
         super(faces, Math.min(Math.abs(target), faces), new LinkedList<Integer>(), skin);
 
         String name = "d"+faces+" -> "+target;
-        diceContainer = new DiceDispalySystem(name, skin);
-        diceContainer.update(formatMemoryString(), formatTotalString());
-        setActor(diceContainer);
-        diceContainer.update(formatMemoryString(), formatTotalString());
+        diceDisplay = new DiceDispalySystem(name, skin);
+        diceDisplay.update(formatMemoryString(), formatTotalString());
+        setActor(diceDisplay);
     }
 
     @Override
     public void roll() {
         setTotal(0);
         populateMemory();
-        diceContainer.update(formatMemoryString(), formatTotalString());
+        diceDisplay.update(formatMemoryString(), formatTotalString());
     }
 
     @Override
@@ -50,11 +48,11 @@ public class DiceUntil extends AbstractDice{
             setNumberOfFaces(parsedFacesInput);
             setLimit(parsedTargetInput, (limit) -> limit <= 0 || limit > getNumberOfFaces());
 
-            diceContainer.getElement(DicePart.NAME).setText("d"+getNumberOfFaces()+" -> "+getLimit());
+            diceDisplay.getElement(DicePart.NAME).setText("d"+getNumberOfFaces()+" -> "+getLimit());
         }, () -> { //when validation fails
             setNumberOfFaces(6);
             setLimit(1);
-            diceContainer.getElement(DicePart.NAME).setText("d"+getNumberOfFaces()+" -> "+getLimit());
+            diceDisplay.getElement(DicePart.NAME).setText("d"+getNumberOfFaces()+" -> "+getLimit());
             Gdx.app.log("State", "Set dice to d6 -> 1");
         });
     }

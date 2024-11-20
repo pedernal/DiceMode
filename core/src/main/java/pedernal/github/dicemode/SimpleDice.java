@@ -1,28 +1,30 @@
 package pedernal.github.dicemode;
 
-import com.badlogic.gdx.scenes.scene2d.ui.Container;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import pedernal.github.dicemode.utilities.DiceDispalySystem;
+import pedernal.github.dicemode.utilities.DicePart;
 import pedernal.github.dicemode.utilities.EditDiceSystem;
 
 import java.util.ArrayList;
 
 public class SimpleDice extends AbstractDice {
-    private Container<Window> diceDisplay;
+    private DiceDispalySystem diceDisplay;
 
     public SimpleDice(int numberOfFaces, Skin skin) {
-        super(numberOfFaces, 0, new ArrayList<Integer>(), skin);
+        super(numberOfFaces, 1, new ArrayList<Integer>(), skin);
         getMemory().add(numberOfFaces);
         setTotal(numberOfFaces);
-        diceDisplay = new Container<Window>(
-            new Window("d"+numberOfFaces, skin)
-        );
-        diceDisplay.width(100); diceDisplay.height(100);
-        String content = String.format("%"+4+"d", getTotal());
-        diceDisplay.getActor().add(content);
-        VerticalGroup group = new VerticalGroup(); group.addActor(diceDisplay);
-        setActor(group);
+        diceDisplay = new DiceDispalySystem("d"+numberOfFaces, skin, 130, 104);
+
+        //setting up unique style from skin for the labels' elements (increasing font size on body Label)
+        Label.LabelStyle labelStyle = new Label.LabelStyle(diceDisplay.getElement(DicePart.BODY).getStyle()); //clone LabelStyle
+        labelStyle.font = skin.getFont("BigNotoMono");
+
+        diceDisplay.getElement(DicePart.BODY).setStyle(labelStyle);
+        diceDisplay.getElements().get(DicePart.TOTAL).setVisible(false); //make the total part not show
+        updateDiceDisplay(Integer.toString(numberOfFaces));
+
+        setActor(diceDisplay);
     }
 
     @Override
@@ -30,8 +32,7 @@ public class SimpleDice extends AbstractDice {
         populateMemory();
         setTotal(getMemory().getFirst());
 
-        String content = String.format("%"+4+"d", getTotal());
-        updateDiceDisplay(content);
+        updateDiceDisplay( Integer.toString(getTotal()) );
     }
 
     @Override
@@ -46,14 +47,15 @@ public class SimpleDice extends AbstractDice {
             int parsedInput = Integer.parseInt(editDiceSystem.getFacesInput());
 
             setNumberOfFaces(parsedInput);
-            diceDisplay.getActor().getTitleLabel().setText("d"+parsedInput);
+            diceDisplay.getElement(DicePart.NAME).setText("d"+parsedInput);
             updateDiceDisplay(Integer.toString(parsedInput));
         });
     }
 
     private void updateDiceDisplay(String content) {
-        diceDisplay.getActor().clear();
-        diceDisplay.getActor().add(content);
+        //somewhat centers the numbers using String.format()
+        int spaces = ((int) diceDisplay.getElements().get(DicePart.BODY).getPrefWidth())/40; //div container with by font size
+        diceDisplay.getElement(DicePart.BODY).setText(String.format("%"+spaces+"s", content));
     }
 
     @Override
