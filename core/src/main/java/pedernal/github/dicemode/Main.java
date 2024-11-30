@@ -2,10 +2,8 @@ package pedernal.github.dicemode;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import pedernal.github.dicemode.modes.DiceLoopMode;
 import pedernal.github.dicemode.modes.Mode;
 import pedernal.github.dicemode.modes.SimpleDiceMode;
-import pedernal.github.dicemode.modes.DiceUntilMode;
 
 public class Main extends Game {
     @Override
@@ -13,14 +11,14 @@ public class Main extends Game {
         Gdx.graphics.setContinuousRendering(false);
         Gdx.graphics.requestRendering();
 
-        MainProgramInterface mainProgramExp = new MainProgramInterface() {
+        MainProgramInterface mainProgramExp = new MainProgramInterface(){
             @Override
             public void switchScreen(Mode mode) {
-                Main.this.dispose();
+                getScreen().dispose();
                 Main.this.setScreen(mode);
             }
         };
-        this.setScreen(new DiceUntilMode(mainProgramExp));
+        this.setScreen(new SimpleDiceMode(mainProgramExp));
     }
 
     @Override
@@ -35,7 +33,7 @@ public class Main extends Game {
 
     @Override
     public void dispose() {
-        getScreen().dispose();
+        //getScreen().dispose();
     }
 
     public interface MainProgramInterface {

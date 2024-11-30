@@ -10,6 +10,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import pedernal.github.dicemode.AbstractDice;
 
+import java.util.AbstractList;
+
 public class EditDiceSystem {
     private AbstractDice selected;
     private Table subTalbe;
@@ -65,7 +67,7 @@ public class EditDiceSystem {
                 try {
                     validate.run();
                 } catch (Exception exception) {
-                    Gdx.app.error("Input error", exception.getClass().getName() + "; " + exception.getMessage());
+                    Gdx.app.error("Input error", exception.getClass().getSimpleName() + "; " + exception.getMessage());
                     handeling.run();
                 }
             }
@@ -83,12 +85,14 @@ public class EditDiceSystem {
         if (selected != null) {
             Drawable background = selected.getSkin().newDrawable("color", Color.CYAN);
             selected.setBackground(background);
+            selected.getActor().pad(2);
         }
     }
 
     public void unhilgiht() {
         if (selected != null) {
             selected.setBackground(null);
+            selected.getActor().pad(0);
         }
     }
 

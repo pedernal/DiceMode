@@ -1,3 +1,5 @@
+/**System to display all sorts of children from AbstractDice**/
+
 package pedernal.github.dicemode.utilities;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -34,16 +36,20 @@ public class DiceDispalySystem extends VerticalGroup {
 
         //setting up the height containers
         elements.values().forEach((container) -> {
-            container.width(width); container.height(30);
+            container.width(width).height(30);
         });
         elements.get(DicePart.BODY).height(height);
 
         elements.values().forEach((container) -> addActor(container));
+        //this.pad(2);
     }
     public DiceDispalySystem(String name, Skin skin) {
         this(name, skin, 130, 100);
     }
 
+    /**@param body String to place on body Label of the display
+     * @param total String to place on total Label of the display
+     * Method to update the display of body (dice memory) and the total*/
     public void update(String body, String total) {
         Label labelTotal = getElement(DicePart.TOTAL);
         Label labelBody = getElement(DicePart.BODY);
@@ -51,11 +57,11 @@ public class DiceDispalySystem extends VerticalGroup {
         labelBody.setText(body);
         labelTotal.setText(total);
 
-        super.childrenChanged();
+        childrenChanged();
     }
 
-    /**@param label
-     * Given the enum value, returns the corresponding label that composes the dice display system
+    /**@param label from DicePart enum
+     * Given the enum value, directly returns the corresponding Label object that composes the dice display system
      * */
     public Label getElement (DicePart label) {
         Label toReturn = null;
@@ -77,6 +83,13 @@ public class DiceDispalySystem extends VerticalGroup {
         return toReturn;
     }
 
+    /**For when visual elements change, call this at the end*/
+    @Override
+    public void childrenChanged() {
+        super.childrenChanged();
+    }
+
+    /**Returns the EnumMap of Containers objects*/
     public EnumMap<DicePart, Container<Actor>> getElements() {
         return elements;
     }

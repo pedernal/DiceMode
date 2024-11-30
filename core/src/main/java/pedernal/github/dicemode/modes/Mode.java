@@ -3,6 +3,7 @@ package pedernal.github.dicemode.modes;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -17,52 +18,43 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
-import pedernal.github.dicemode.Main;
+import pedernal.github.dicemode.Main.MainProgramInterface;
 import pedernal.github.dicemode.utilities.EditDiceSystem;
 
 import java.util.function.Supplier;
 
 public class Mode implements Screen {
-    private Main.MainProgramInterface mainProgram;
+    private MainProgramInterface mainProgram;
     private Stage stage;
     private Table table;
     private Skin skin;
     private EditDiceSystem editDiceSystem;
     private TextButton rollButton;
+    private ModeChanger modeChanger;
 
-    public Mode(Main.MainProgramInterface mainProgram)
+    public Mode(MainProgramInterface mainProgram)
     {
         this.mainProgram = mainProgram;
         stage = new Stage(new ScreenViewport());
-        FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("./NotoSansMono-Bold.ttf"));
-        FreeTypeFontParameter parameter = new FreeTypeFontParameter();
-        parameter.size = 12;
-        parameter.color = Color.DARK_GRAY;
-        parameter.shadowColor = Color.WHITE;
-        parameter.shadowOffsetY = 2;
-        FreeTypeFontParameter parameter1 = new FreeTypeFontParameter();
-        parameter1.size = 40;
-        parameter1.color = Color.DARK_GRAY;
-        parameter1.shadowColor = Color.WHITE;
-        parameter1.shadowOffsetY = 2;
 
-        TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("./skin/clean-crispy-ui.atlas"));
         skin = new Skin(Gdx.files.internal("./skin/clean-crispy-ui.json"));
+        //setup skin stuff
+        TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("./skin/clean-crispy-ui.atlas"));
         skin.addRegions(atlas);
-        skin.add("NotoMono", fontGenerator.generateFont(parameter));
-        skin.add("BigNotoMono", fontGenerator.generateFont(parameter1));
+            //Generate fonts to add to skin
+        FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("./NotoSansMono-Bold.ttf"));
+        skin.add( "NotoMono", fontGenerator.generateFont(varyFontSize(12)) );
+        skin.add( "BigNotoMono", fontGenerator.generateFont(varyFontSize(40)) );
         fontGenerator.dispose();
 
         table = new Table();
         table.setFillParent(true);
-        table.setDebug(false); //TODO: DELETE: Only for debugging
 
         editDiceSystem = new EditDiceSystem(skin);
-        table.add(editDiceSystem.getTable()).padTop(100);
-        table.row();
 
-        TextButtonStyle buttonStyle = skin.get(TextButtonStyle.class);
-        rollButton = new TextButton("Roll", buttonStyle);
+        rollButton = new TextButton("Roll", skin);
+
+        modeChanger = new ModeChanger(skin);
 
         stage.addActor(table);
     }
@@ -70,13 +62,20 @@ public class Mode implements Screen {
     @Override
     public void show() {
         Gdx.input.setInputProcessor(stage);
+
+        //setup table stuff
+        table.setDebug(false); //TODO: DELETE: Only for debugging
+        table.add(modeChanger);
+        table.row();
+        table.add(editDiceSystem.getTable());
+        table.row();
     }
 
     @Override
-    public void render(float v) {
+    public void render(float deltaTime) {
         ScreenUtils.clear(Color.GRAY);
 
-        stage.act(Gdx.graphics.getDeltaTime());
+        stage.act(deltaTime);
         stage.draw();
     }
 
@@ -86,18 +85,13 @@ public class Mode implements Screen {
     }
 
     @Override
-    public void pause() {
-    }
+    public void pause() {}
 
     @Override
-    public void resume() {
-
-    }
+    public void resume() {}
 
     @Override
-    public void hide() {
-
-    }
+    public void hide() {}
 
     public void setupTableLayout(Supplier<Cell <? extends Actor>> addButtons) {
         addButtons.get().expandY().bottom();
@@ -107,22 +101,23 @@ public class Mode implements Screen {
             width(100).
             height(90).
             bottom().
-            padBottom(100);
+            padBottom(50);
+    }
+
+    public MainProgramInterface getMainProgram() {
+        return mainProgram;
     }
 
     public Skin getSkin() {
         return skin;
     }
 
-    public Stage getStage() { return stage; }
-
     public Table getTable() { return table; }
 
     public EditDiceSystem getEditDiceSystem() { return editDiceSystem; }
 
-    public TextButton getRollButton() {
-        return rollButton;
-    }
+
+    public ModeChanger getModeChanger() { return modeChanger; }
 
     public void pressRollButton(Runnable diceBehavior) {
         rollButton.addListener(new InputListener() {
@@ -132,6 +127,15 @@ public class Mode implements Screen {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) { diceBehavior.run(); }
         });
+    }
+
+    private FreeTypeFontParameter varyFontSize(int size) {
+        FreeTypeFontParameter parameter = new FreeTypeFontParameter();
+        parameter.size = size;
+        parameter.color = Color.DARK_GRAY;
+        parameter.shadowColor = Color.WHITE;
+        parameter.shadowOffsetY = 2;
+        return parameter;
     }
 
     @Override

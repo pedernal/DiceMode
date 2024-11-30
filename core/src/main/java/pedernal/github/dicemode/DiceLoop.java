@@ -47,6 +47,7 @@ public class DiceLoop extends AbstractDice{
             setLimit(parsedRollsInput);
 
             diceDisplay.getElement(DicePart.NAME).setText("d"+getNumberOfFaces()+" x"+getLimit());
+            diceDisplay.childrenChanged();
         });
     }
 }

@@ -1,3 +1,6 @@
+/**All Dice types extend from this abstract class
+ * Implements randomness, a List to remember rolls (for iterative rolls) and a total from all rolls**/
+
 package pedernal.github.dicemode;
 
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -14,7 +17,7 @@ public abstract class AbstractDice extends Container<VerticalGroup> {
     private int limit;
     private Random randomGenerator = new Random();
     private Skin skin;
-    private TriPredicate<Integer, Integer, Integer> predicate = (Integer i, Integer size, Integer element) -> true;
+    private TriPredicate<Integer, Integer, Integer> predicate = (Integer i, Integer size, Integer element) -> true; //predicate lambda exp for the default behavior of formatMemoryString()
 
     public AbstractDice(int numberOfFaces, int limit, List<Integer> memory, Skin skin) {
         super();
@@ -25,10 +28,14 @@ public abstract class AbstractDice extends Container<VerticalGroup> {
         this.memory = memory;
     }
 
+    /**Method to implement what happens whn child Dice is rolled*/
     public abstract void roll();
 
+    /**Method to implement how memory List will be populated, intended to be called in roll()*/
     public abstract void populateMemory();
 
+    /**@param editDiceSystem EditDiceSystem object that will select a child instance and edit its values
+     * Method to implement how editDiceSystem will modify the child instance. Method is called by EditDiceSystem.select(), so not intended to be called directly, although it's possible to select a child instance that way*/
     public abstract void updateFrom(EditDiceSystem editDiceSystem);
 
     public int getTotal() {
@@ -62,9 +69,12 @@ public abstract class AbstractDice extends Container<VerticalGroup> {
         this.numberOfFaces = numberOfFaces;
     }
 
+    /**@param limit Integer value to set new limit to
+     * @param predicate Lambda that returns a boolean for limit evaluation. Takes the limit parameter which implements the evaluation for the acceptable ranges of the new limit value
+     * Method to update the limit for iterative rolls, the predicate lambda. Throws error if evaluation fails*/
     public void setLimit(int limit, Predicate<Integer> predicate) throws IllegalArgumentException {
         if (predicate.test(limit)) {
-            throw new IllegalArgumentException("Parameter out of logical range");
+            throw new IllegalArgumentException(limit + " is out of range of possible rolls");
         }
 
         this.limit = limit;
@@ -81,11 +91,16 @@ public abstract class AbstractDice extends Container<VerticalGroup> {
         total += value;
     }
 
+    /**Outputs string with formated total*/
     public String formatTotalString() {
         return "Total: " + total;
     }
 
-    public String formatMemoryString(int formatSpaces, TriPredicate condition, char symbol) {
+    /**@param formatSpaces the max amount of blank spaces before each number, meant to aid magnitude alignment with each line
+     * @param condition a TriPredicate lambda that will implement determination of whether symbol should be appended at the end fo each line. Takes three Integers; current memory index, memory size and current memory element to help the implementation
+     * @param symbol the single character to be appended at the end of each line
+     * Outputs string with formated memory, each number element on a line, lines spaced at same distance, and a relevant symbol at the end of each line. It's up to the user to make sure formating indicates populateMemory() behavior*/
+    public String formatMemoryString(int formatSpaces, TriPredicate<Integer, Integer, Integer> condition, char symbol) {
         String toReturn = "\n";
 
         int size = memory.size();
@@ -101,20 +116,23 @@ public abstract class AbstractDice extends Container<VerticalGroup> {
         return formatMemoryString(formatTotalString().length(), predicate, '+');
     }
 
-    public String formatStringAll(TriPredicate condition, char symbol) {
+    /**@param condition a TriPredicate lambda that will implement determination of whether symbol should be appended at the end fo each line. Takes three Integers; current memory index, memory size and current memory element to help the implementation
+     * @param symbol the single character to be appended at the end of each memory line
+     * Method calls both formatTotalString() and formatMemoryString(), thus the parameters, adds a line to separate total from memory and outputs as a single string*/
+    public String formatStringAll(TriPredicate<Integer, Integer, Integer> condition, char symbol) {
         String toReturn = "";
 
         if (memory.isEmpty()) {
-            toReturn = "       "+total+"+\n" +
+            toReturn = "       "+total+symbol+'\n' +
                        "       =\n" +
                        "Total: " + total;
         } else {
             int totalLength = Integer.toString(total).length();
             String formatedTotal = formatTotalString();
             String formatedMemory = formatMemoryString(formatedTotal.length(), condition, symbol);
-            String line = "=";
+            StringBuilder line = new StringBuilder("="); //line to divide memory and total
             for (int i = 1; i < totalLength; ++i) {
-                line += "=";
+                line.append("=");
             }
 
             toReturn = String.format("%s%"+formatedTotal.length()+"s\n", formatedMemory, line);
@@ -122,10 +140,5 @@ public abstract class AbstractDice extends Container<VerticalGroup> {
         }
 
         return toReturn;
-    }
-
-    @Override
-    public String toString() {
-        return formatStringAll(predicate, '+');
     }
 }

@@ -1,6 +1,7 @@
 package pedernal.github.dicemode;
 
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.utils.Align;
 import pedernal.github.dicemode.utilities.DiceDispalySystem;
 import pedernal.github.dicemode.utilities.DicePart;
 import pedernal.github.dicemode.utilities.EditDiceSystem;
@@ -21,6 +22,7 @@ public class SimpleDice extends AbstractDice {
         labelStyle.font = skin.getFont("BigNotoMono");
 
         diceDisplay.getElement(DicePart.BODY).setStyle(labelStyle);
+        diceDisplay.getElement(DicePart.BODY).setAlignment(Align.center);
         diceDisplay.getElements().get(DicePart.TOTAL).setVisible(false); //make the total part not show
         updateDiceDisplay(Integer.toString(numberOfFaces));
 
@@ -37,7 +39,7 @@ public class SimpleDice extends AbstractDice {
 
     @Override
     public void populateMemory() {
-        getMemory().set(0, getRandomNumber());
+        getMemory().set(0, getRandomNumber()); //this dice only hols one value in memory
     }
 
     @Override
@@ -53,13 +55,9 @@ public class SimpleDice extends AbstractDice {
     }
 
     private void updateDiceDisplay(String content) {
-        //somewhat centers the numbers using String.format()
+        //somewhat centering the numbers using String.format()
         int spaces = ((int) diceDisplay.getElements().get(DicePart.BODY).getPrefWidth())/40; //div container with by font size
-        diceDisplay.getElement(DicePart.BODY).setText(String.format("%"+spaces+"s", content));
-    }
-
-    @Override
-    public String toString() {
-        return formatTotalString();
+        //diceDisplay.update(String.format("%"+spaces+"s", content), content); //second arg is for total but won't be shown so it no matter
+        diceDisplay.update(content, "");
     }
 }

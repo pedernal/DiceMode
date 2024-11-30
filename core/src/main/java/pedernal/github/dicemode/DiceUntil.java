@@ -16,6 +16,7 @@ public class DiceUntil extends AbstractDice{
         String name = "d"+faces+" -> "+target;
         diceDisplay = new DiceDispalySystem(name, skin);
         diceDisplay.update(formatMemoryString(), formatTotalString());
+
         setActor(diceDisplay);
     }
 
@@ -49,10 +50,12 @@ public class DiceUntil extends AbstractDice{
             setLimit(parsedTargetInput, (limit) -> limit <= 0 || limit > getNumberOfFaces());
 
             diceDisplay.getElement(DicePart.NAME).setText("d"+getNumberOfFaces()+" -> "+getLimit());
+            diceDisplay.childrenChanged();
         }, () -> { //when validation fails
             setNumberOfFaces(6);
             setLimit(1);
             diceDisplay.getElement(DicePart.NAME).setText("d"+getNumberOfFaces()+" -> "+getLimit());
+            diceDisplay.childrenChanged();
             Gdx.app.log("State", "Set dice to d6 -> 1");
         });
     }
