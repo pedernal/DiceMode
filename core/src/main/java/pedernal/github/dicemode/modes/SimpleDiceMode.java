@@ -1,30 +1,35 @@
 package pedernal.github.dicemode.modes;
 
-import com.badlogic.gdx.Gdx;
 import pedernal.github.dicemode.SimpleDice;
 import pedernal.github.dicemode.Main.MainProgramInterface;
 
 public class SimpleDiceMode extends Mode {
-    private SimpleDice d6;
+    private SimpleDice dice;
 
     public SimpleDiceMode(MainProgramInterface mainProgram) {
         super(mainProgram);
-        d6 = new SimpleDice(6, getSkin());
+        dice = new SimpleDice(6, getSkin());
     }
 
     @Override
     public void show() {
         super.show();
-        getModeChanger().setUpButtons(() -> {
-                getMainProgram().switchScreen( new DiceUntilMode(getMainProgram()) );
-        },
-        () -> {
+        setRollButton(dice::roll);
+        getEditDiceSystem().select(dice);
+        setupTableLayout(() -> getTable().add(dice));
+
+        getModeChanger().setLeftButtonInput(() -> {
+            getMainProgram().switchScreen( new DiceUntilMode(getMainProgram()) );
+        }).setLeftButtonText("<- Until Mode").
+        setRightButtonInput(() -> {
             getMainProgram().switchScreen( new DiceLoopMode(getMainProgram()) );
-        },
-            "<- Until Mode", "Loop Mode ->"
-        );
-        pressRollButton(d6::roll);
-        getEditDiceSystem().select(d6);
-        setupTableLayout(() -> getTable().add(d6));
+        }).setRightButtonText("Loop Mode ->");
+        getModeChanger().setHeaderText("Simple Dice Mode");
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        dice.dispose();
     }
 }

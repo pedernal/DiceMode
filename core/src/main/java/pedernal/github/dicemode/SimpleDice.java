@@ -1,21 +1,29 @@
+/**Class extention of AbstractDice to make a simple dice that rolls once.
+ * Roll implements asynchronity so the roll is done on a separate thread.
+ * There will one thread at a time.*/
+
 package pedernal.github.dicemode;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Align;
 import pedernal.github.dicemode.utilities.DiceDispalySystem;
 import pedernal.github.dicemode.utilities.DicePart;
 import pedernal.github.dicemode.utilities.EditDiceSystem;
-
 import java.util.ArrayList;
+import java.util.concurrent.CompletableFuture;
 
 public class SimpleDice extends AbstractDice {
+    private CompletableFuture<String> future;
     private DiceDispalySystem diceDisplay;
 
     public SimpleDice(int numberOfFaces, Skin skin) {
         super(numberOfFaces, 1, new ArrayList<Integer>(), skin);
+
+        future = CompletableFuture.supplyAsync(() -> {return "\0";});
+        diceDisplay = new DiceDispalySystem("d"+numberOfFaces, skin, 130, 104);
         getMemory().add(numberOfFaces);
         setTotal(numberOfFaces);
-        diceDisplay = new DiceDispalySystem("d"+numberOfFaces, skin, 130, 104);
 
         //setting up unique style from skin for the labels' elements (increasing font size on body Label)
         Label.LabelStyle labelStyle = new Label.LabelStyle(diceDisplay.getElement(DicePart.BODY).getStyle()); //clone LabelStyle
@@ -31,15 +39,29 @@ public class SimpleDice extends AbstractDice {
 
     @Override
     public void roll() {
-        populateMemory();
-        setTotal(getMemory().getFirst());
+        updateDiceDisplay("···"); //set display to "···" before running thread to update the dice
 
-        updateDiceDisplay( Integer.toString(getTotal()) );
+        future.cancel(true); //if not completed when roll again, method will cancel future
+
+        future = CompletableFuture.supplyAsync(() -> { //create new future
+            populateMemory();
+            return Integer.toString(getTotal());
+        });
+        future.thenAccept((result) -> { //once future is completed, send to the thread that draws stuff what to do with/after future's result
+            Gdx.app.postRunnable(() -> { updateDiceDisplay(result); });
+        });
     }
 
+    //Synchronized to assure thread safety
     @Override
-    public void populateMemory() {
+    public synchronized void populateMemory() {
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException e) {
+            System.out.println(e);
+        }
         getMemory().set(0, getRandomNumber()); //this dice only hols one value in memory
+        setTotal(getMemory().getFirst());
     }
 
     @Override
@@ -54,10 +76,13 @@ public class SimpleDice extends AbstractDice {
         });
     }
 
+    /**Helper method to facilitate updating */
     private void updateDiceDisplay(String content) {
-        //somewhat centering the numbers using String.format()
-        int spaces = ((int) diceDisplay.getElements().get(DicePart.BODY).getPrefWidth())/40; //div container with by font size
-        //diceDisplay.update(String.format("%"+spaces+"s", content), content); //second arg is for total but won't be shown so it no matter
         diceDisplay.update(content, "");
+    }
+
+    @Override
+    public void dispose() {
+        future.cancel(true);
     }
 }

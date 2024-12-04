@@ -1,3 +1,6 @@
+/**Class implementation for the general layout and features shared by all Modes. All Modes should extend this class.
+ * This class extends from LibGDX's Screen.*/
+
 package pedernal.github.dicemode.modes;
 
 import com.badlogic.gdx.Gdx;
@@ -73,7 +76,7 @@ public class Mode implements Screen {
 
     @Override
     public void render(float deltaTime) {
-        ScreenUtils.clear(Color.GRAY);
+        ScreenUtils.clear(Color.LIGHT_GRAY);
 
         stage.act(deltaTime);
         stage.draw();
@@ -93,8 +96,10 @@ public class Mode implements Screen {
     @Override
     public void hide() {}
 
-    public void setupTableLayout(Supplier<Cell <? extends Actor>> addButtons) {
-        addButtons.get().expandY().bottom();
+    /**Sets up how the general layout of the UI will be.
+     * @param addElements supplier lambda expression that implements the arbitrary addition of elements in the right place.*/
+    public void setupTableLayout(Supplier<Cell <? extends Actor>> addElements) {
+        addElements.get().expandY().bottom();
         table.row();
         table.add(rollButton).
             expandY().
@@ -104,22 +109,28 @@ public class Mode implements Screen {
             padBottom(50);
     }
 
+    /**@return the exposed methods from main the program.*/
     public MainProgramInterface getMainProgram() {
         return mainProgram;
     }
 
+    /**@return the skin used for the UI elements.*/
     public Skin getSkin() {
         return skin;
     }
 
+    /**@return the table that holds all the UI elements.*/
     public Table getTable() { return table; }
 
+    /**@return the object that selects and edits the dice.*/
     public EditDiceSystem getEditDiceSystem() { return editDiceSystem; }
 
-
+    /**@return the widget that is used to change to other Modes*/
     public ModeChanger getModeChanger() { return modeChanger; }
 
-    public void pressRollButton(Runnable diceBehavior) {
+    /**Method that sets InputListener for the roll button
+     * @param diceBehavior runnable lambda expression that implements the rolling of the dice*/
+    public void setRollButton(Runnable diceBehavior) {
         rollButton.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) { return true; }
@@ -129,6 +140,8 @@ public class Mode implements Screen {
         });
     }
 
+    /**Helper method to generate font parameters with arbitrary size
+     * @size the size that the font will be*/
     private FreeTypeFontParameter varyFontSize(int size) {
         FreeTypeFontParameter parameter = new FreeTypeFontParameter();
         parameter.size = size;
@@ -138,6 +151,7 @@ public class Mode implements Screen {
         return parameter;
     }
 
+    /**Things to dispose of*/
     @Override
     public void dispose() {
         stage.dispose();

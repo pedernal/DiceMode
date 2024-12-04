@@ -14,16 +14,22 @@ public class DiceLoopMode extends Mode {
     @Override
     public void show() {
         super.show();
-        getModeChanger().setUpButtons(() -> {
-                getMainProgram().switchScreen( new SimpleDiceMode(getMainProgram()) );
-            },
-            () -> {
-                getMainProgram().switchScreen( new DiceUntilMode(getMainProgram()) );
-            },
-            "<- Simple Dice", "Until Mode ->"
-        );
-        pressRollButton(dice::roll);
+        setRollButton(dice::roll);
         getEditDiceSystem().select(dice);
         setupTableLayout(() -> getTable().add(dice));
+
+        getModeChanger().setLeftButtonInput(() -> {
+            getMainProgram().switchScreen( new SimpleDiceMode(getMainProgram()) );
+        }).setLeftButtonText("<- Simple Dice").
+        setRightButtonInput(() -> {
+            getMainProgram().switchScreen( new DiceUntilMode(getMainProgram()) );
+        }).setRightButtonText("Until Mode ->");
+        getModeChanger().setHeaderText("Dice Loop Mode");
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        dice.dispose();
     }
 }

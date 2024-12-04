@@ -1,3 +1,5 @@
+/**Main program class. Implements an interface that exposes the mechanism for Modes (Screen) to change to other Modes. Extends LibGDX's Game.*/
+
 package pedernal.github.dicemode;
 
 import com.badlogic.gdx.Game;
@@ -11,6 +13,7 @@ public class Main extends Game {
         Gdx.graphics.setContinuousRendering(false);
         Gdx.graphics.requestRendering();
 
+        //Implementing interface to expose Mode switching mechanism to Mode types
         MainProgramInterface mainProgramExp = new MainProgramInterface(){
             @Override
             public void switchScreen(Mode mode) {
@@ -36,7 +39,9 @@ public class Main extends Game {
         //getScreen().dispose();
     }
 
+    /**Interface to implement how Mods will change.*/
     public interface MainProgramInterface {
+        /**@param mode a new instance of a Mode.*/
         public void switchScreen(Mode mode);
     }
 }

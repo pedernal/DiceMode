@@ -1,3 +1,5 @@
+/**System to select and edit properties of any given object that extends AbstractDice (a dice).*/
+
 package pedernal.github.dicemode.utilities;
 
 import com.badlogic.gdx.Gdx;
@@ -9,8 +11,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import pedernal.github.dicemode.AbstractDice;
-
-import java.util.AbstractList;
 
 public class EditDiceSystem {
     private AbstractDice selected;
@@ -31,33 +31,42 @@ public class EditDiceSystem {
         updateButton = new TextButton("Update", skin);
     }
 
+    /**Selects a dice object, passes this instance to the dice and sets menu to edit dice visible.
+     * @param dice The instance of a dice to be selected by the system.*/
     public void select(AbstractDice dice) {
         selected = dice;
         dice.updateFrom(this);
-
         subTalbe.setVisible(true);
     }
 
-    public void unselect() {
-        updateButton.clearListeners();
+    /**Deselects the dice, clears system buttons' listeners.*/
+    public void deselect() {
         subTalbe.setVisible(false);
+        updateButton.clearListeners();
+        selected = null;
     }
 
+    /**Sets up input UI field for new faces of selected dice.*/
     public void setUpFacesInput() {
         subTalbe.add(facesLabel).height(30).space(10);
         subTalbe.add(facesInput).width(100).space(10);
         subTalbe.row();
     }
 
+    /**Sets up input UI field for new limit for selected dice.
+     * @param str text to show on the label of field.*/
     public void setUpLimitInput(String str) {
         limitLabel.setText(str);
         subTalbe.add(limitLabel).height(30).space(10);
         subTalbe.add(limitInput).width(100).space(10);
         subTalbe.row();
     }
-    public void setUpLimitInput() { setUpLimitInput("Limit"); }
+    //public void setUpLimitInput() { setUpLimitInput("Limit"); }
 
-    public void setUpUpdateButton(Runnable validate, Runnable handeling) {
+    /**Sets up button's input listener to update the selected dice.
+     * @param validate runnable lambda expression that should implement how the input will be validated.
+     * @param handling runnable lambda expression that should implement what to do if validation fails.*/
+    public void setUpUpdateButton(Runnable validate, Runnable handling) {
         updateButton.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) { return true; }
@@ -68,7 +77,7 @@ public class EditDiceSystem {
                     validate.run();
                 } catch (Exception exception) {
                     Gdx.app.error("Input error", exception.getClass().getSimpleName() + "; " + exception.getMessage());
-                    handeling.run();
+                    handling.run();
                 }
             }
         });
@@ -81,6 +90,7 @@ public class EditDiceSystem {
         });
     }
 
+    /**If a dice has been selected, visually highlights it.*/
     public void highlight() {
         if (selected != null) {
             Drawable background = selected.getSkin().newDrawable("color", Color.CYAN);
@@ -89,6 +99,7 @@ public class EditDiceSystem {
         }
     }
 
+    /**If a dice has been selected, removes the visual highlight from selected dice.*/
     public void unhilgiht() {
         if (selected != null) {
             selected.setBackground(null);
@@ -96,27 +107,30 @@ public class EditDiceSystem {
         }
     }
 
-    public void setSelected(AbstractDice selected) {
+    /*public void setSelected(AbstractDice selected) {
         this.selected = selected;
     }
 
     public AbstractDice getSelected() {
         return selected;
-    }
+    }*/
 
+     /**@return the table that makes the UI layout of the system.*/
     public Table getTable() {
         return subTalbe;
     }
 
+    /**@return the input stored on the field for dice faces.*/
     public String getFacesInput() {
         return facesInput.getText();
     }
 
+    /**@return the input stored on the field for dice limit.*/
     public String getLimitInput() {
         return limitInput.getText();
     }
 
-    public TextButton getUpdateButton() {
+    /*public TextButton getUpdateButton() {
         return updateButton;
-    }
+    }*/
 }

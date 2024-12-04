@@ -1,4 +1,4 @@
-/**System to display all sorts of children from AbstractDice**/
+/**Widget UI system to display all sorts of children from AbstractDice, extends from LibGDX's VerticalGroup**/
 
 package pedernal.github.dicemode.utilities;
 
@@ -47,10 +47,10 @@ public class DiceDispalySystem extends VerticalGroup {
         this(name, skin, 130, 100);
     }
 
-    /**@param body String to place on body Label of the display
-     * @param total String to place on total Label of the display
-     * Method to update the display of body (dice memory) and the total*/
-    public void update(String body, String total) {
+    /**Updates the display of body (dice memory) and the total. Synchronized to assure thread safety.
+     * @param body String to place on body Label of the display.
+     * @param total String to place on total Label of the display.*/
+    public synchronized void update(String body, String total) {
         Label labelTotal = getElement(DicePart.TOTAL);
         Label labelBody = getElement(DicePart.BODY);
 
@@ -60,9 +60,9 @@ public class DiceDispalySystem extends VerticalGroup {
         childrenChanged();
     }
 
-    /**@param label from DicePart enum
-     * Given the enum value, directly returns the corresponding Label object that composes the dice display system
-     * */
+    /** Get specific Label that composes the UI widget.
+     * @param label enum value.
+     * @return Label*/
     public Label getElement (DicePart label) {
         Label toReturn = null;
 
@@ -83,13 +83,13 @@ public class DiceDispalySystem extends VerticalGroup {
         return toReturn;
     }
 
-    /**For when visual elements change, call this at the end*/
+    /**For when visual elements stat has changed, call this at the end*/
     @Override
     public void childrenChanged() {
         super.childrenChanged();
     }
 
-    /**Returns the EnumMap of Containers objects*/
+    /**@return the EnumMap of all Container objects that make the UI widget*/
     public EnumMap<DicePart, Container<Actor>> getElements() {
         return elements;
     }

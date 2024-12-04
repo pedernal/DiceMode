@@ -14,17 +14,24 @@ public class DiceUntilMode extends Mode {
     @Override
     public void show() {
         super.show();
-        getModeChanger().setUpButtons(() -> {
-                getMainProgram().switchScreen( new DiceLoopMode(getMainProgram()) );
-            },
-            () -> {
-                getMainProgram().switchScreen( new SimpleDiceMode(getMainProgram()) );
-            },
-            "<- Loop Mode", "Simple Dice ->"
-        );
-        pressRollButton(dice::roll);
+        setRollButton(dice::roll);
         getEditDiceSystem().select(dice);
         setupTableLayout(() -> getTable().add(dice));
+
+        getModeChanger().
+        setLeftButtonInput(() -> {
+            getMainProgram().switchScreen( new DiceLoopMode(getMainProgram()) );
+        }).setLeftButtonText("<- Loop Mode").
+        setRightButtonInput(() -> {
+            getMainProgram().switchScreen( new SimpleDiceMode(getMainProgram()) );
+        }).setRightButtonText("Simple Dice ->");
+        getModeChanger().setHeaderText("Dice Until Mode");
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        dice.dispose();
     }
 }
 
