@@ -5,8 +5,8 @@ package pedernal.github.dicemode.modes;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -16,24 +16,25 @@ import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import pedernal.github.dicemode.Main.MainProgramInterface;
-import pedernal.github.dicemode.utilities.EditDiceSystem;
+import pedernal.github.dicemode.utilities.Console;
+import pedernal.github.dicemode.utilities.EditDieSystem;
 
 import java.util.function.Supplier;
 
 public class Mode implements Screen {
-    private MainProgramInterface mainProgram;
-    private Stage stage;
+    private final MainProgramInterface mainProgram;
+    private final Stage stage;
     private Table table;
     private Skin skin;
-    private EditDiceSystem editDiceSystem;
+    private final EditDieSystem editDieSystem;
     private TextButton rollButton;
-    private ModeChanger modeChanger;
+    private final ModeChanger modeChanger;
+    private final Console console;
 
     public Mode(MainProgramInterface mainProgram)
     {
@@ -45,18 +46,19 @@ public class Mode implements Screen {
         TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("./skin/clean-crispy-ui.atlas"));
         skin.addRegions(atlas);
             //Generate fonts to add to skin
-        FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("./NotoSansMono-Bold.ttf"));
-        skin.add( "NotoMono", fontGenerator.generateFont(varyFontSize(12)) );
-        skin.add( "BigNotoMono", fontGenerator.generateFont(varyFontSize(40)) );
+        FileHandle fileHandle = Gdx.files.internal("./NotoSansMono-Bold.ttf");
+        FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(fileHandle);
+        skin.add( "NotoMono", fontGenerator.generateFont(varyFontSize(12, Color.DARK_GRAY, true)) );
+        skin.add( "BigNotoMono", fontGenerator.generateFont(varyFontSize(40, Color.DARK_GRAY, true)) );
+        skin.add( "NotoConsole", fontGenerator.generateFont(varyFontSize(10, Color.WHITE, false)) );
         fontGenerator.dispose();
 
         table = new Table();
         table.setFillParent(true);
 
-        editDiceSystem = new EditDiceSystem(skin);
-
+        console = new Console(skin);
+        editDieSystem = new EditDieSystem(console, skin);
         rollButton = new TextButton("Roll", skin);
-
         modeChanger = new ModeChanger(skin);
 
         stage.addActor(table);
@@ -68,9 +70,11 @@ public class Mode implements Screen {
 
         //setup table stuff
         table.setDebug(false); //TODO: DELETE: Only for debugging
+        table.add(console).width(350).height(50);
+        table.row();
         table.add(modeChanger);
         table.row();
-        table.add(editDiceSystem.getTable());
+        table.add(editDieSystem.getTable());
         table.row();
     }
 
@@ -122,32 +126,39 @@ public class Mode implements Screen {
     /**@return the table that holds all the UI elements.*/
     public Table getTable() { return table; }
 
-    /**@return the object that selects and edits the dice.*/
-    public EditDiceSystem getEditDiceSystem() { return editDiceSystem; }
+    /**@return the object that selects and edits the die.*/
+    public EditDieSystem getEditDieSystem() { return editDieSystem; }
 
     /**@return the widget that is used to change to other Modes*/
     public ModeChanger getModeChanger() { return modeChanger; }
 
+    /**@return the console*/
+    public Console getConsole() {
+        return console;
+    }
+
     /**Method that sets InputListener for the roll button
-     * @param diceBehavior runnable lambda expression that implements the rolling of the dice*/
-    public void setRollButton(Runnable diceBehavior) {
+     * @param dieBehavior runnable lambda expression that implements the rolling of the die*/
+    public void setRollButton(Runnable dieBehavior) {
         rollButton.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) { return true; }
 
             @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) { diceBehavior.run(); }
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) { dieBehavior.run(); }
         });
     }
 
     /**Helper method to generate font parameters with arbitrary size
      * @size the size that the font will be*/
-    private FreeTypeFontParameter varyFontSize(int size) {
+    private FreeTypeFontParameter varyFontSize(int size, Color color, boolean addBevel) {
         FreeTypeFontParameter parameter = new FreeTypeFontParameter();
         parameter.size = size;
-        parameter.color = Color.DARK_GRAY;
-        parameter.shadowColor = Color.WHITE;
-        parameter.shadowOffsetY = 2;
+        parameter.color = color;
+        if (addBevel) {
+            parameter.shadowColor = Color.WHITE;
+            parameter.shadowOffsetY = 2;
+        }
         return parameter;
     }
 

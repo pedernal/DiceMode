@@ -5,7 +5,7 @@ package pedernal.github.dicemode;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import pedernal.github.dicemode.modes.Mode;
-import pedernal.github.dicemode.modes.SimpleDiceMode;
+import pedernal.github.dicemode.modes.SimpleDieMode;
 
 public class Main extends Game {
     @Override
@@ -21,7 +21,7 @@ public class Main extends Game {
                 Main.this.setScreen(mode);
             }
         };
-        this.setScreen(new SimpleDiceMode(mainProgramExp));
+        this.setScreen(new SimpleDieMode(mainProgramExp));
     }
 
     @Override
@@ -36,12 +36,11 @@ public class Main extends Game {
 
     @Override
     public void dispose() {
-        //getScreen().dispose();
     }
 
     /**Interface to implement how Mods will change.*/
     public interface MainProgramInterface {
         /**@param mode a new instance of a Mode.*/
-        public void switchScreen(Mode mode);
+        void switchScreen(Mode mode);
     }
 }

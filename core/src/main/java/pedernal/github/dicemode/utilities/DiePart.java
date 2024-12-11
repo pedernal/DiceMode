@@ -1,5 +1,5 @@
 package pedernal.github.dicemode.utilities;
 
-public enum DicePart {
+public enum DiePart {
     NAME, BODY, TOTAL
 }

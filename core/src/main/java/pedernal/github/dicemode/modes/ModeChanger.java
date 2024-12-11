@@ -22,16 +22,16 @@ public class ModeChanger extends Table {
         add(rightButton).padLeft(10);
 
         padBottom(50);
-        padTop(50);
+        padTop(25);
     }
 
-    /**Sets up the buttons' implementation that should change to other Modes.
+    /*/**Sets up the buttons' implementation that should change to other Modes at once.
      * @param leftBehavior runnable lambda expression that implements the behavior of the left button.
      * @param rightBehavior runnable lambda expression that implements.
      * @param leftButtonStr String to display on left button.
      * @param rightButtonStr String to display on right button.
      * */
-    public void setUpButtons(Runnable leftBehavior, Runnable rightBehavior, String leftButtonStr, String rightButtonStr) {
+    /*public void setUpButtons(Runnable leftBehavior, Runnable rightBehavior, String leftButtonStr, String rightButtonStr) {
         leftButton.clearListeners();
         rightButton.clearListeners();
 
@@ -61,7 +61,7 @@ public class ModeChanger extends Table {
 
         leftButton.setText(leftButtonStr);
         rightButton.setText(rightButtonStr);
-    }
+    }*/
 
     /**Sets up the behavior of left button when pressed.
      * @param leftBehavior runnable lambda expression that implements the changing to a Mode.
@@ -92,7 +92,7 @@ public class ModeChanger extends Table {
     }
 
     /**Sets the text for the left button.
-     * @param text
+     * @param text to display in the button
      * @return this instance to chain call other setup methods*/
     public ModeChanger setLeftButtonText(String text) {
         leftButton.setText(text);
@@ -100,7 +100,7 @@ public class ModeChanger extends Table {
     }
 
     /**Sets the text for the right button.
-     * @param text
+     * @param text to display in the button
      * @return this instance to chain call other setup methods*/
     public ModeChanger setRightButtonText(String text) {
         rightButton.setText(text);
@@ -108,7 +108,7 @@ public class ModeChanger extends Table {
     }
 
     /**Sets the text for the header.
-     * @param text*/
+     * @param text to display in the header*/
     public void setHeaderText(String text) {
         header.setText(text);
     }

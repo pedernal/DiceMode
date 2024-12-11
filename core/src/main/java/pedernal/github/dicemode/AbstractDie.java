@@ -6,45 +6,45 @@ package pedernal.github.dicemode;
 
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Disposable;
-import pedernal.github.dicemode.utilities.EditDiceSystem;
+import pedernal.github.dicemode.utilities.Console;
+import pedernal.github.dicemode.utilities.EditDieSystem;
 import pedernal.github.dicemode.utilities.TriPredicate;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Predicate;
 
-public abstract class AbstractDice extends Container<VerticalGroup> implements Disposable {
+public abstract class AbstractDie extends Container<VerticalGroup> implements Disposable {
     private int numberOfFaces;
     private List<Integer> memory;
-    private int total;
-    private int limit;
-    private Random randomGenerator = new Random();
+    private int total, limit;
+    private final Random randomGenerator = new Random();
     private Skin skin;
-    private TriPredicate<Integer, Integer, Integer> predicate = (Integer i, Integer size, Integer element) -> true; //predicate lambda exp for the default behavior of formatMemoryString()
+    private final TriPredicate<Integer, Integer, Integer> predicate = (Integer i, Integer size, Integer element) -> true; //predicate lambda exp for the default behavior of formatMemoryString()
 
-    public AbstractDice(int numberOfFaces, int limit, List<Integer> memory, Skin skin) {
+    public AbstractDie(int numberOfFaces, int limit, List<Integer> memory, Skin skin) {
         super();
         this.numberOfFaces = numberOfFaces;
         total = 0;
         this.limit = limit;
-        this.skin = skin;
         this.memory = memory;
+        this.skin = skin;
     }
 
-    /**Method to implement what happens whn child Dice is rolled.*/
+    /**Method to implement what happens whn child Die is rolled.*/
     public abstract void roll();
 
     /**Method to implement how memory List will be populated, intended to be called in roll().*/
     public abstract void populateMemory();
 
-    /**Method to implement how editDiceSystem will modify the child instance. Method is called by EditDiceSystem.select(), so not intended to be called directly, although it's possible to select an instance that way.
-     * @param editDiceSystem EditDiceSystem object that will select a child instance and edit its values.*/
-    public abstract void updateFrom(EditDiceSystem editDiceSystem);
+    /**Method to implement how editDieSystem will modify the child instance. Method is called by EditDieSystem.select(), so not intended to be called directly, although it's possible to select an instance that way.
+     * @param editDieSystem EditDieSystem object that will select a child instance and edit its values.*/
+    public abstract void updateFrom(EditDieSystem editDieSystem);
 
     public int getTotal() {
         return total;
     }
 
-    /**Set the total after dice roll(s).*/
+    /**Set the total after die roll(s).*/
     public void setTotal(int total) {
         this.total = total;
     }
@@ -59,22 +59,22 @@ public abstract class AbstractDice extends Container<VerticalGroup> implements D
         return memory;
     }
 
-    /**@return skin used by the dice for UI.*/
+    /**@return skin used by the die for UI.*/
     public Skin getSkin() {
         return skin;
     }
 
-    /**@return the number of faces of the dice.*/
+    /**@return the number of faces of the die.*/
     public int getNumberOfFaces() {
         return numberOfFaces;
     }
 
-    /**Sets the number of faces for the dice.
+    /**Sets the number of faces for the die.
      * Throws IllegalArgumentException if argument is 0 or less.
-     * @param numberOfFaces number of faces for the dice.*/
+     * @param numberOfFaces number of faces for the die.*/
     public void setNumberOfFaces(int numberOfFaces) throws IllegalArgumentException {
-        if (numberOfFaces <= 0) {
-            throw new IllegalArgumentException("A dice cannot have 0 or less faces");
+        if (numberOfFaces <= 0 || numberOfFaces > 1000) {
+            throw new IllegalArgumentException("A die cannot have 0 or less faces or more than 1000");
         }
         this.numberOfFaces = numberOfFaces;
     }
@@ -83,17 +83,18 @@ public abstract class AbstractDice extends Container<VerticalGroup> implements D
      * Throws IllegalArgumentException if implemented evaluation fails for acceptable limit ranges
      * @param limit value to set new limit to.
      * @param predicate predicate lambda exception that returns a boolean for limit evaluation. Takes the limit parameter to evaluate acceptable ranges.*/
-    public void setLimit(int limit, Predicate<Integer> predicate) throws IllegalArgumentException {
+    public void setLimit(int limit, Predicate<Integer> predicate, String errorMessage) throws IllegalArgumentException {
         if (predicate.test(limit)) {
-            throw new IllegalArgumentException(limit + " is out of range of possible rolls");
+            throw new IllegalArgumentException(errorMessage);
         }
 
         this.limit = limit;
     }
     public void setLimit(int limit) throws IllegalArgumentException {
-        setLimit(limit, (passedLimit) -> passedLimit <= 0);
+        String errorMessage = limit + " is out of sensible range (0, 1000]";
+        setLimit(limit, (passedLimit) -> passedLimit <= 0 || passedLimit > 1000, errorMessage);
     }
-     /**@return the limit an iterative dice will iterate to.*/
+     /**@return the limit an iterative die will iterate to.*/
     public int getLimit() {
         return limit;
     }
@@ -114,16 +115,16 @@ public abstract class AbstractDice extends Container<VerticalGroup> implements D
      * @param condition a TriPredicate lambda that will implement determination of whether symbol should be appended at the end fo each line. Takes three Integers; current memory index, memory size and current memory element to help the implementation.
      * @param symbol the single character to be appended at the end of each line.*/
     public String formatMemoryString(int formatSpaces, TriPredicate<Integer, Integer, Integer> condition, char symbol) {
-        String toReturn = "\n";
+        StringBuilder toReturn = new StringBuilder("\n");
 
         int size = memory.size();
         for (int i = 0; i < size; ++i) {
             int element = memory.get(i);
             char determinedSymbol = ( condition.test(i, size, element) )? symbol : ' ';
-            toReturn += String.format("%"+formatSpaces+"d%c\n", memory.get(i), determinedSymbol);
+            toReturn.append(String.format("%"+formatSpaces+"d%c\n", memory.get(i), determinedSymbol));
         }
 
-        return toReturn;
+        return toReturn.toString();
     }
     public String formatMemoryString() {
         return formatMemoryString(formatTotalString().length(), predicate, '+');

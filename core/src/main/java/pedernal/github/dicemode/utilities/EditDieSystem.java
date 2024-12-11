@@ -10,16 +10,21 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import pedernal.github.dicemode.AbstractDice;
+import pedernal.github.dicemode.AbstractDie;
 
-public class EditDiceSystem {
-    private AbstractDice selected;
-    private Table subTalbe;
+import java.util.function.Consumer;
+
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
+
+public class EditDieSystem {
+    private AbstractDie selected;
+    private final Table subTalbe;
     private Label facesLabel, limitLabel;
     private TextField facesInput, limitInput;
     private TextButton updateButton;
+    private Console console;
 
-    public EditDiceSystem(Skin skin) {
+    public EditDieSystem(Console console, Skin skin) {
         selected = null;
         subTalbe = new Table();
         subTalbe.setVisible(false);
@@ -29,24 +34,26 @@ public class EditDiceSystem {
         limitLabel = new Label("Limit", skin);
         limitInput = new TextField("", skin);
         updateButton = new TextButton("Update", skin);
+
+        this.console = console;
     }
 
-    /**Selects a dice object, passes this instance to the dice and sets menu to edit dice visible.
-     * @param dice The instance of a dice to be selected by the system.*/
-    public void select(AbstractDice dice) {
-        selected = dice;
-        dice.updateFrom(this);
+    /**Selects a die object, passes this instance to the die and sets menu to edit die visible.
+     * @param die The instance of a die to be selected by the system.*/
+    public void select(AbstractDie die) {
+        selected = die;
+        die.updateFrom(this);
         subTalbe.setVisible(true);
     }
 
-    /**Deselects the dice, clears system buttons' listeners.*/
+    /**Deselects the die, clears system buttons' listeners.*/
     public void deselect() {
         subTalbe.setVisible(false);
         updateButton.clearListeners();
         selected = null;
     }
 
-    /**Sets up input UI field for new faces of selected dice.*/
+    /**Sets up input UI field for new faces of selected die.*/
     public void setUpFacesInput() {
         subTalbe.add(facesLabel).height(30).space(10);
         subTalbe.add(facesInput).width(100).space(10);
@@ -63,10 +70,11 @@ public class EditDiceSystem {
     }
     //public void setUpLimitInput() { setUpLimitInput("Limit"); }
 
-    /**Sets up button's input listener to update the selected dice.
+    /**Sets up button's input listener to update the selected die.
+     * Will catch and handle any errors thrown by lambda validate.
      * @param validate runnable lambda expression that should implement how the input will be validated.
-     * @param handling runnable lambda expression that should implement what to do if validation fails.*/
-    public void setUpUpdateButton(Runnable validate, Runnable handling) {
+     * @param handling consumer lambda expression that should implement what to do if validation fails.*/
+    public void setUpUpdateButton(Runnable validate, Consumer<Exception> handling) {
         updateButton.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) { return true; }
@@ -75,9 +83,12 @@ public class EditDiceSystem {
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 try {
                     validate.run();
+                    console.setText("Die updated", Color.WHITE);
                 } catch (Exception exception) {
                     Gdx.app.error("Input error", exception.getClass().getSimpleName() + "; " + exception.getMessage());
-                    handling.run();
+                    console.setText("Error: "+exception.getMessage(), Color.PINK);
+                    updateButton.addAction( sequence(color(Color.RED), delay(.33f), color(Color.WHITE)) );
+                    handling.accept(exception);
                 }
             }
         });
@@ -85,12 +96,12 @@ public class EditDiceSystem {
         subTalbe.add(updateButton).colspan(2).spaceTop(10);
     }
     public void setUpUpdateButton(Runnable validate){
-        setUpUpdateButton(validate, () -> {
-            Gdx.app.log("State", "Some or all changes didn't apply");
+        setUpUpdateButton(validate, (exception) -> {
+            Gdx.app.log("State", "Changes didn't apply");
         });
     }
 
-    /**If a dice has been selected, visually highlights it.*/
+    /**If a die has been selected, visually highlights it.*/
     public void highlight() {
         if (selected != null) {
             Drawable background = selected.getSkin().newDrawable("color", Color.CYAN);
@@ -99,7 +110,7 @@ public class EditDiceSystem {
         }
     }
 
-    /**If a dice has been selected, removes the visual highlight from selected dice.*/
+    /**If a die has been selected, removes the visual highlight from selected die.*/
     public void unhilgiht() {
         if (selected != null) {
             selected.setBackground(null);
@@ -107,11 +118,11 @@ public class EditDiceSystem {
         }
     }
 
-    /*public void setSelected(AbstractDice selected) {
+    /*public void setSelected(AbstractDie selected) {
         this.selected = selected;
     }
 
-    public AbstractDice getSelected() {
+    public AbstractDie getSelected() {
         return selected;
     }*/
 
@@ -120,12 +131,12 @@ public class EditDiceSystem {
         return subTalbe;
     }
 
-    /**@return the input stored on the field for dice faces.*/
+    /**@return the input stored on the field for die faces.*/
     public String getFacesInput() {
         return facesInput.getText();
     }
 
-    /**@return the input stored on the field for dice limit.*/
+    /**@return the input stored on the field for die limit.*/
     public String getLimitInput() {
         return limitInput.getText();
     }
