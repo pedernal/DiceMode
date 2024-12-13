@@ -18,7 +18,7 @@ public class DieLoop extends AbstractDie{
     public DieLoop(int faces, int rolls, Skin skin) {
         super(faces, Math.abs(rolls), new ArrayList<Integer>(rolls), skin);
 
-        future = CompletableFuture.supplyAsync(() -> { return new String[]{}; });
+        future = CompletableFuture.supplyAsync(() -> null);
         String name = "d"+faces+" x"+rolls;
         dieDisplay = new DieDisplaySystem(name, skin);
         dieDisplay.update(formatMemoryString(), formatTotalString());
