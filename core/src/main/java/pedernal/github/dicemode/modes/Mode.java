@@ -150,7 +150,7 @@ public class Mode implements Screen {
     }
 
     /**Helper method to generate font parameters with arbitrary size
-     * @size the size that the font will be*/
+     * @param size the size that the font will be*/
     private FreeTypeFontParameter varyFontSize(int size, Color color, boolean addBevel) {
         FreeTypeFontParameter parameter = new FreeTypeFontParameter();
         parameter.size = size;
