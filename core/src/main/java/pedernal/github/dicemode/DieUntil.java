@@ -10,14 +10,13 @@ import pedernal.github.dicemode.utilities.*;
 import java.util.LinkedList;
 import java.util.concurrent.CompletableFuture;
 
+@SuppressWarnings("NewApi")
 public class DieUntil extends AbstractDie{
-    private CompletableFuture<String[]> future;
     private final DieDisplaySystem dieDisplay;
 
     public DieUntil(int faces, int target, Skin skin) {
         super(faces, Math.min(Math.abs(target), faces), new LinkedList<Integer>(), skin);
 
-        future = CompletableFuture.supplyAsync(() -> null);
         String name = "d"+faces+" -> "+target;
         dieDisplay = new DieDisplaySystem(name, skin);
         dieDisplay.update(formatMemoryString(), formatTotalString());
@@ -29,15 +28,11 @@ public class DieUntil extends AbstractDie{
     public void roll() {
         dieDisplay.update("       ···", "Total: ···");
 
-        future.cancel(true);
-
-        future = CompletableFuture.supplyAsync(() -> {
-            populateMemory();
-            return new String[]{formatMemoryString(), formatTotalString()};
-        });
-        future.thenAccept((result) ->
-            Gdx.app.postRunnable(() -> dieDisplay.update(result[0], result[1]))
-        );
+        getFuture().cancel(true);
+        setFuture(() -> {
+           populateMemory();
+           return new String[] {formatMemoryString(), formatTotalString()};
+        }).thenAccept( (result) -> Gdx.app.postRunnable(() -> dieDisplay.update(result[0], result[1])) );
     }
 
     @Override
@@ -54,24 +49,25 @@ public class DieUntil extends AbstractDie{
 
     @Override
     public void updateFrom(EditDieSystem editDieSystem) {
-        editDieSystem.setUpFacesInput();
-        editDieSystem.setUpLimitInput("Target");
-        editDieSystem.setUpUpdateButton(() -> { //passed lambda's error will be caught
-            int parsedFacesInput = Integer.parseInt(editDieSystem.getFacesInput());
-            int parsedTargetInput = Integer.parseInt(editDieSystem.getLimitInput());
+        editDieSystem.UISetup().
+            facesInput().
+            limitInput("Target").
+            updateButton(() -> {
+                int parsedFacesInput = Integer.parseInt(editDieSystem.getFacesInput());
+                int parsedTargetInput = Integer.parseInt(editDieSystem.getLimitInput());
 
-            //this order call matters, limit range needs to be validated before setting faces
-            String errorMessage = "target cannot be 0 or less or bigger than number of faces";
-            setLimit(parsedTargetInput, (target) -> target <= 0 || target > parsedFacesInput, errorMessage); //condition to invalidate input, if target is 0 or less or bigger than number of dice faces
-            setNumberOfFaces(parsedFacesInput);
+                //this order call matters, limit range needs to be validated before setting faces
+                String errorMessage = "target cannot be 0 or less or bigger than number of faces";
+                setLimit(parsedTargetInput, (target) -> target <= 0 || target > parsedFacesInput, errorMessage); //condition to invalidate input, if target is 0 or less or bigger than number of dice faces
+                setNumberOfFaces(parsedFacesInput);
 
-            dieDisplay.getElement(DiePart.NAME).setText("d"+getNumberOfFaces()+" -> "+getLimit());
-            dieDisplay.childrenChanged();
-        });
+                dieDisplay.getElement(DiePart.NAME).setText("d"+getNumberOfFaces()+" -> "+getLimit());
+                dieDisplay.childrenChanged();
+            });
     }
 
     @Override
     public void dispose() {
-        future.cancel(true);
+        getFuture().cancel(true);
     }
 }

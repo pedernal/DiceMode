@@ -23,6 +23,7 @@ public class EditDieSystem {
     private TextField facesInput, limitInput;
     private TextButton updateButton;
     private Console console;
+    private ButtonSetupInterface buttonSetup;
 
     public EditDieSystem(Console console, Skin skin) {
         selected = null;
@@ -36,6 +37,31 @@ public class EditDieSystem {
         updateButton = new TextButton("Update", skin);
 
         this.console = console;
+
+        buttonSetup = new ButtonSetupInterface() {
+            @Override
+            public ButtonSetupInterface facesInput() {
+                setUpFacesInput();
+                return buttonSetup;
+            }
+
+            @Override
+            public ButtonSetupInterface limitInput(String str) {
+                setUpLimitInput(str);
+                return buttonSetup;
+            }
+
+            @Override
+            public ButtonSetupInterface updateButton(Runnable validate, Consumer<Exception> handling) {
+                setUpUpdateButton(validate, handling);
+                return buttonSetup;
+            }
+            @Override
+            public ButtonSetupInterface updateButton(Runnable validate) {
+                setUpUpdateButton(validate);
+                return buttonSetup;
+            }
+        };
     }
 
     /**Selects a die object, passes this instance to the die and sets menu to edit die visible.
@@ -53,8 +79,13 @@ public class EditDieSystem {
         selected = null;
     }
 
+    /**@return the interface object that will be used to setup the UI to edit the selected die*/
+    public ButtonSetupInterface UISetup() {
+        return buttonSetup;
+    }
+
     /**Sets up input UI field for new faces of selected die.*/
-    public void setUpFacesInput() {
+    private void setUpFacesInput() {
         subTalbe.add(facesLabel).height(30).space(10);
         subTalbe.add(facesInput).width(100).space(10);
         subTalbe.row();
@@ -62,7 +93,7 @@ public class EditDieSystem {
 
     /**Sets up input UI field for new limit for selected dice.
      * @param str text to show on the label of field.*/
-    public void setUpLimitInput(String str) {
+    private void setUpLimitInput(String str) {
         limitLabel.setText(str);
         subTalbe.add(limitLabel).height(30).space(10);
         subTalbe.add(limitInput).width(100).space(10);
@@ -74,7 +105,7 @@ public class EditDieSystem {
      * Will catch and handle any errors thrown by lambda validate.
      * @param validate runnable lambda expression that should implement how the input will be validated.
      * @param handling consumer lambda expression that should implement what to do if validation fails.*/
-    public void setUpUpdateButton(Runnable validate, Consumer<Exception> handling) {
+    private void setUpUpdateButton(Runnable validate, Consumer<Exception> handling) {
         updateButton.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) { return true; }
@@ -95,7 +126,7 @@ public class EditDieSystem {
 
         subTalbe.add(updateButton).colspan(2).spaceTop(10);
     }
-    public void setUpUpdateButton(Runnable validate){
+    private void setUpUpdateButton(Runnable validate){
         setUpUpdateButton(validate, (exception) -> {
             Gdx.app.log("State", "Changes didn't apply");
         });
@@ -144,4 +175,11 @@ public class EditDieSystem {
     /*public TextButton getUpdateButton() {
         return updateButton;
     }*/
+
+    public interface ButtonSetupInterface {
+        ButtonSetupInterface facesInput();
+        ButtonSetupInterface limitInput(String str);
+        ButtonSetupInterface updateButton(Runnable validate, Consumer<Exception> handling);
+        ButtonSetupInterface updateButton(Runnable validate);
+    }
 }

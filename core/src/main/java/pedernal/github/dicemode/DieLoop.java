@@ -11,14 +11,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import pedernal.github.dicemode.utilities.*;
 
+@SuppressWarnings("NewApi")
 public class DieLoop extends AbstractDie{
-    private CompletableFuture<String[]> future;
     private final DieDisplaySystem dieDisplay;
 
     public DieLoop(int faces, int rolls, Skin skin) {
         super(faces, Math.abs(rolls), new ArrayList<Integer>(rolls), skin);
 
-        future = CompletableFuture.supplyAsync(() -> null);
         String name = "d"+faces+" x"+rolls;
         dieDisplay = new DieDisplaySystem(name, skin);
         dieDisplay.update(formatMemoryString(), formatTotalString());
@@ -29,15 +28,12 @@ public class DieLoop extends AbstractDie{
     public void roll() {
         dieDisplay.update("       ···", "Total: ···");
 
-        future.cancel(true);
-
-        future = CompletableFuture.supplyAsync(() -> {
+        getFuture().cancel(true);
+        setFuture(() -> {
             populateMemory();
             return new String[]{formatMemoryString(), formatTotalString()};
-        });
-        future.thenAccept((result) ->
-            Gdx.app.postRunnable(() -> dieDisplay.update(result[0], result[1]))
-        );
+        }).thenAccept( (result) -> Gdx.app.postRunnable(() -> dieDisplay.update(result[0], result[1])) );
+
     }
 
     @Override
@@ -53,21 +49,22 @@ public class DieLoop extends AbstractDie{
 
     @Override
     public void updateFrom(EditDieSystem editDieSystem) {
-        editDieSystem.setUpFacesInput();
-        editDieSystem.setUpLimitInput("Rolls");
-        editDieSystem.setUpUpdateButton(() -> {
-            int parsedFacesInput = Integer.parseInt(editDieSystem.getFacesInput());
-            int parsedRollsInput = Integer.parseInt(editDieSystem.getLimitInput());
-            int oldLimit = getLimit();
+        editDieSystem.UISetup().
+            facesInput().
+            limitInput("Rolls").
+            updateButton(() -> {
+                int parsedFacesInput = Integer.parseInt(editDieSystem.getFacesInput());
+                int parsedRollsInput = Integer.parseInt(editDieSystem.getLimitInput());
+                int oldLimit = getLimit();
 
-            setNumberOfFaces(parsedFacesInput);
-            setLimit(parsedRollsInput);
+                setNumberOfFaces(parsedFacesInput);
+                setLimit(parsedRollsInput);
 
-            resetMemoryCapacity(oldLimit, parsedRollsInput);
+                resetMemoryCapacity(oldLimit, parsedRollsInput);
 
-            dieDisplay.getElement(DiePart.NAME).setText("d"+getNumberOfFaces()+" x"+getLimit());
-            dieDisplay.childrenChanged();
-        });
+                dieDisplay.getElement(DiePart.NAME).setText("d"+getNumberOfFaces()+" x"+getLimit());
+                dieDisplay.childrenChanged();
+            });
     }
 
     private void resetMemoryCapacity(int oldLimit, int newLimit) {
@@ -78,6 +75,6 @@ public class DieLoop extends AbstractDie{
 
     @Override
     public void dispose() {
-        future.cancel(true);
+        getFuture().cancel(true);
     }
 }

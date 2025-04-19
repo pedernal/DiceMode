@@ -17,7 +17,7 @@ public class SimpleDieMode extends Mode {
     public SimpleDieMode(MainProgramInterface mainProgram) {
         super(mainProgram);
 
-        //Create die with data from memory else default
+        //Create die with data from memory, else declare default die
         LinkedList<DieConfig> dieConfigs = MainMemory.INSTANCE.getDieConfigs(Modes.SIMPLE_DIE_MODE);
         die = (!dieConfigs.isEmpty())?
             new SimpleDie(dieConfigs.getFirst().numberOfFaces, getSkin())

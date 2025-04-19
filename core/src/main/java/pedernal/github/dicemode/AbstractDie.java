@@ -11,14 +11,18 @@ import pedernal.github.dicemode.utilities.EditDieSystem;
 import pedernal.github.dicemode.utilities.TriPredicate;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
+@SuppressWarnings("NewApi")
 public abstract class AbstractDie extends Container<VerticalGroup> implements Disposable {
     private int numberOfFaces;
     private List<Integer> memory;
     private int total, limit;
     private final Random randomGenerator = new Random();
     private Skin skin;
+    private CompletableFuture<String[]> future;
     private final TriPredicate<Integer, Integer, Integer> predicate = (Integer i, Integer size, Integer element) -> true; //predicate lambda exp for the default behavior of formatMemoryString()
 
     public AbstractDie(int numberOfFaces, int limit, List<Integer> memory, Skin skin) {
@@ -28,6 +32,7 @@ public abstract class AbstractDie extends Container<VerticalGroup> implements Di
         this.limit = limit;
         this.memory = memory;
         this.skin = skin;
+        future = new CompletableFuture<String[]>();
     }
 
     /**Method to implement what happens whn child Die is rolled.*/
@@ -36,7 +41,7 @@ public abstract class AbstractDie extends Container<VerticalGroup> implements Di
     /**Method to implement how memory List will be populated, intended to be called in roll().*/
     public abstract void populateMemory();
 
-    /**Method to implement how editDieSystem will modify the child instance. Method is called by EditDieSystem.select(), so not intended to be called directly, although it's possible to select an instance that way.
+    /**Method to implement how editDieSystem will modify the die. Method is called by EditDieSystem.select(), so not intended to be called directly, although it's possible to select an instance that way.
      * @param editDieSystem EditDieSystem object that will select a child instance and edit its values.*/
     public abstract void updateFrom(EditDieSystem editDieSystem);
 
@@ -44,7 +49,8 @@ public abstract class AbstractDie extends Container<VerticalGroup> implements Di
         return total;
     }
 
-    /**Set the total after die roll(s).*/
+    /**Set the total after die roll(s).
+     * @param total value to set total to.*/
     public void setTotal(int total) {
         this.total = total;
     }
@@ -67,6 +73,16 @@ public abstract class AbstractDie extends Container<VerticalGroup> implements Di
     /**@return the number of faces of the die.*/
     public int getNumberOfFaces() {
         return numberOfFaces;
+    }
+
+    /**@return the CompletableFuture that can/should run concurrently.*/
+    public CompletableFuture<String[]> getFuture() {
+        return future;
+    };
+
+    /**@return the limit an iterative die will iterate to.*/
+    public int getLimit() {
+        return limit;
     }
 
     /**Sets the number of faces for the die.
@@ -94,9 +110,12 @@ public abstract class AbstractDie extends Container<VerticalGroup> implements Di
         String errorMessage = limit + " is out of sensible range (0, 1000]";
         setLimit(limit, (passedLimit) -> passedLimit <= 0 || passedLimit > 1000, errorMessage);
     }
-     /**@return the limit an iterative die will iterate to.*/
-    public int getLimit() {
-        return limit;
+
+    /**@param supplier is the callback function to pass to the completable future for it to execute.
+     * @return the CompletableFuture to access its API methods after initialization.*/
+    public CompletableFuture<String[]> setFuture(Supplier<String[]> supplier) {
+        future = CompletableFuture.supplyAsync(supplier);
+        return future;
     }
 
     /**Adds value to the total.
@@ -130,7 +149,7 @@ public abstract class AbstractDie extends Container<VerticalGroup> implements Di
         return formatMemoryString(formatTotalString().length(), predicate, '+');
     }
 
-    /**Method calls both formatTotalString() and formatMemoryString(), thus the parameters, adds a line to separate total from memory and outputs as a single string.
+    /**Method calls both formatTotalString() and formatMemoryString(), adds a line to separate total from memory and outputs as a single string.
      * @param condition a TriPredicate lambda expression that will implement determination of whether symbol should be appended at the end fo each line. Takes three Integers; current memory index, memory size and current memory element to help the implementation.
      * @param symbol the single character to be appended at the end of each memory line.*/
     public String formatStringAll(TriPredicate<Integer, Integer, Integer> condition, char symbol) {

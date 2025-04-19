@@ -11,14 +11,13 @@ import pedernal.github.dicemode.utilities.*;
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 
+@SuppressWarnings("NewApi")
 public class SimpleDie extends AbstractDie {
-    private CompletableFuture<String> future;
     private final DieDisplaySystem dieDisplay;
 
     public SimpleDie(int numberOfFaces, Skin skin) {
         super(numberOfFaces, 1, new ArrayList<Integer>(), skin);
 
-        future = CompletableFuture.supplyAsync(() -> "\0");
         dieDisplay = new DieDisplaySystem("d"+numberOfFaces, skin, 130, 104);
         getMemory().add(numberOfFaces);
         setTotal(numberOfFaces);
@@ -39,15 +38,11 @@ public class SimpleDie extends AbstractDie {
     public void roll() {
         updateDieDisplay("···"); //set display to "···" before running thread to update the die
 
-        future.cancel(true); //if not completed when roll again, method will cancel future
-
-        future = CompletableFuture.supplyAsync(() -> { //create new future
+        getFuture().cancel(true);
+        setFuture(() -> {
             populateMemory();
-            return Integer.toString(getTotal());
-        });
-        future.thenAccept((result) -> //once future is completed, send to the thread that draws stuff what to do with/after future's result
-            Gdx.app.postRunnable(() -> updateDieDisplay(result))
-        );
+            return new String[] {Integer.toString(getTotal())};
+        }).thenAccept( (result) -> Gdx.app.postRunnable(() -> updateDieDisplay(result[0])) );
     }
 
     //Synchronized to assure thread safety
@@ -64,8 +59,9 @@ public class SimpleDie extends AbstractDie {
 
     @Override
     public void updateFrom(EditDieSystem editDieSystem) {
-        editDieSystem.setUpFacesInput();
-        editDieSystem.setUpUpdateButton(() -> {
+        editDieSystem.UISetup().
+            facesInput().
+            updateButton(() -> {
             int parsedInput = Integer.parseInt(editDieSystem.getFacesInput());
 
             setNumberOfFaces(parsedInput);
@@ -75,13 +71,13 @@ public class SimpleDie extends AbstractDie {
         });
     }
 
-    /**Helper method to facilitate updating */
+    /**Helper method to facilitate updating die's display.*/
     private void updateDieDisplay(String content) {
         dieDisplay.update(content, "");
     }
 
     @Override
     public void dispose() {
-        future.cancel(true);
+        getFuture().cancel(true);
     }
 }
