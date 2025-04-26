@@ -5,7 +5,8 @@
 package pedernal.github.dicemode;
 
 import java.util.ArrayList;
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -25,15 +26,19 @@ public class DieLoop extends AbstractDie{
     }
 
     @Override
-    public void roll() {
+    public Integer roll() throws ExecutionException, InterruptedException {
         dieDisplay.update("       ···", "Total: ···");
 
         getFuture().cancel(true);
+
         setFuture(() -> {
             populateMemory();
             return new String[]{formatMemoryString(), formatTotalString()};
-        }).thenAccept( (result) -> Gdx.app.postRunnable(() -> dieDisplay.update(result[0], result[1])) );
+        });
+        getFuture().thenAccept( (result) -> Gdx.app.postRunnable(() -> dieDisplay.update(result[0], result[1])) );
+        getFuture().get();
 
+        return getTotal();
     }
 
     @Override

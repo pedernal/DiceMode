@@ -3,6 +3,7 @@
 package pedernal.github.dicemode.modes;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import pedernal.github.dicemode.SimpleDie;
 import pedernal.github.dicemode.Main.MainProgramInterface;
 import pedernal.github.dicemode.utilities.MainMemory;
@@ -28,7 +29,18 @@ public class SimpleDieMode extends Mode {
     @Override
     public void show() {
         super.show();
-        setRollButton(die::roll);
+        setRollButton(() -> {
+            try {
+                die.roll();
+                /*String result = Integer.toString(die.roll());
+                getConsole().setText("Total: "+result, Color.LIME);
+                Gdx.app.log("Die total", result);*/
+            } catch (Exception e) {
+                String errorMessage = e.getMessage();
+                Gdx.app.error("Thread error", e.getClass().getSimpleName()+"; "+errorMessage);
+                getConsole().setText("Error: "+errorMessage, Color.PINK);
+            }
+        });
         getEditDieSystem().select(die);
         setupTableLayout(() -> getTable().add(die));
 
@@ -52,7 +64,6 @@ public class SimpleDieMode extends Mode {
             dieConfigs.getFirst().numberOfFaces = die.getNumberOfFaces();
         }
         Gdx.app.log("SimpleDieMode state", dieConfigs.toString());
-
     }
 
     @Override

@@ -64,27 +64,28 @@ public class EditDieSystem {
         };
     }
 
-    /**Selects a die object, passes this instance to the die and sets menu to edit die visible.
-     * @param die The instance of a die to be selected by the system.*/
+    /**Selects an {@link AbstractDie} child object (a die), passes this instance to the die and sets menu to edit die visible.
+     * @param die The {@link AbstractDie} child instance to be selected by the system.*/
     public void select(AbstractDie die) {
         selected = die;
         die.updateFrom(this);
         subTalbe.setVisible(true);
     }
 
-    /**Deselects the die, clears system buttons' listeners.*/
+    /**Deselects the {@link AbstractDie} child object, clears the buttons' listeners.*/
     public void deselect() {
         subTalbe.setVisible(false);
         updateButton.clearListeners();
         selected = null;
     }
 
-    /**@return the interface object that will be used to setup the UI to edit the selected die*/
+    /**API to set up system UI.
+     * @return the {@linkplain ButtonSetupInterface} object that exposes methods to set up the UI to edit the selected {@link AbstractDie} child object.*/
     public ButtonSetupInterface UISetup() {
         return buttonSetup;
     }
 
-    /**Sets up input UI field for new faces of selected die.*/
+    /**Sets up input UI field for new faces of selected {@link AbstractDie} child object.*/
     private void setUpFacesInput() {
         subTalbe.add(facesLabel).height(30).space(10);
         subTalbe.add(facesInput).width(100).space(10);
@@ -101,7 +102,7 @@ public class EditDieSystem {
     }
     //public void setUpLimitInput() { setUpLimitInput("Limit"); }
 
-    /**Sets up button's input listener to update the selected die.
+    /**Sets up button's {@link InputListener} to update the selected {@link AbstractDie} child object.
      * Will catch and handle any errors thrown by lambda validate.
      * @param validate runnable lambda expression that should implement how the input will be validated.
      * @param handling consumer lambda expression that should implement what to do if validation fails.*/
@@ -141,7 +142,7 @@ public class EditDieSystem {
         }
     }
 
-    /**If a die has been selected, removes the visual highlight from selected die.*/
+    /**If a die has been selected, removes the visual highlight from selected {@link AbstractDie} child object.*/
     public void unhilgiht() {
         if (selected != null) {
             selected.setBackground(null);
@@ -162,12 +163,12 @@ public class EditDieSystem {
         return subTalbe;
     }
 
-    /**@return the input stored on the field for die faces.*/
+    /**@return the input stored on the field for {@link AbstractDie} child object faces.*/
     public String getFacesInput() {
         return facesInput.getText();
     }
 
-    /**@return the input stored on the field for die limit.*/
+    /**@return the input stored on the field for {@link AbstractDie} child object limit.*/
     public String getLimitInput() {
         return limitInput.getText();
     }
@@ -176,6 +177,7 @@ public class EditDieSystem {
         return updateButton;
     }*/
 
+    /**Interface to expose API to set up the system's UI in each {@link pedernal.github.dicemode.modes.Mode}*/
     public interface ButtonSetupInterface {
         ButtonSetupInterface facesInput();
         ButtonSetupInterface limitInput(String str);

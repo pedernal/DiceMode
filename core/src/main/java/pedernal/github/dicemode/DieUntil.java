@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import pedernal.github.dicemode.utilities.*;
 import java.util.LinkedList;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @SuppressWarnings("NewApi")
 public class DieUntil extends AbstractDie{
@@ -25,14 +26,20 @@ public class DieUntil extends AbstractDie{
     }
 
     @Override
-    public void roll() {
+    public Integer roll() throws ExecutionException, InterruptedException {
         dieDisplay.update("       ···", "Total: ···");
 
         getFuture().cancel(true);
+
         setFuture(() -> {
-           populateMemory();
-           return new String[] {formatMemoryString(), formatTotalString()};
-        }).thenAccept( (result) -> Gdx.app.postRunnable(() -> dieDisplay.update(result[0], result[1])) );
+            populateMemory();
+            return new String[] {formatMemoryString(), formatTotalString()};
+        });
+
+        getFuture().thenAccept( (result) -> Gdx.app.postRunnable(() -> dieDisplay.update(result[0], result[1])) );
+        getFuture().get();
+
+        return getTotal();
     }
 
     @Override

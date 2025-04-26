@@ -3,6 +3,7 @@
 package pedernal.github.dicemode.modes;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import pedernal.github.dicemode.DieUntil;
 import pedernal.github.dicemode.Main.MainProgramInterface;
 import pedernal.github.dicemode.utilities.MainMemory;
@@ -28,7 +29,15 @@ public class DieUntilMode extends Mode {
     @Override
     public void show() {
         super.show();
-        setRollButton(die::roll);
+        setRollButton(() -> {
+            try {
+                die.roll();
+            } catch (Exception e) {
+                String errorMessage = e.getMessage();
+                Gdx.app.error("Thread error", e.getClass().getSimpleName()+"; "+errorMessage);
+                getConsole().setText("Error: "+errorMessage, Color.PINK);
+            }
+        });
         getEditDieSystem().select(die);
         setupTableLayout(() -> getTable().add(die));
 

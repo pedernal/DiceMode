@@ -17,6 +17,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
@@ -39,7 +41,8 @@ public class Mode implements Screen {
     public Mode(MainProgramInterface mainProgram)
     {
         this.mainProgram = mainProgram;
-        stage = new Stage(new ScreenViewport());
+        //stage = new Stage(new ScreenViewport());
+        stage = new Stage(new ExtendViewport(400, 640));
 
         skin = new Skin(Gdx.files.internal("./skin/clean-crispy-ui.json"));
         //setup skin stuff
@@ -113,29 +116,23 @@ public class Mode implements Screen {
             padBottom(50);
     }
 
-    /**@return the exposed methods from main the program.*/
-    public MainProgramInterface getMainProgram() {
-        return mainProgram;
-    }
+    /**@return the exposed interface methods from the main the program ({@link MainProgramInterface}).*/
+    public MainProgramInterface getMainProgram() { return mainProgram; }
 
     /**@return the skin used for the UI elements.*/
-    public Skin getSkin() {
-        return skin;
-    }
+    public Skin getSkin() { return skin; }
 
-    /**@return the table that holds all the UI elements.*/
+    /**@return the main table that holds all the UI elements.*/
     public Table getTable() { return table; }
 
-    /**@return the object that selects and edits the die.*/
+    /**@return the {@link EditDieSystem} object that selects and edits the die.*/
     public EditDieSystem getEditDieSystem() { return editDieSystem; }
 
-    /**@return the widget that is used to change to other Modes*/
+    /**@return the widget {@link ModeChanger} that is used to change to other Modes.*/
     public ModeChanger getModeChanger() { return modeChanger; }
 
-    /**@return the console*/
-    public Console getConsole() {
-        return console;
-    }
+    /**@return the {@link Console} object.*/
+    public Console getConsole() { return console; }
 
     /**Method that sets InputListener for the roll button
      * @param dieBehavior runnable lambda expression that implements the rolling of the die*/

@@ -47,7 +47,7 @@ public class DieDisplaySystem extends VerticalGroup {
         this(name, skin, 130, 100);
     }
 
-    /**Updates the display of body (die memory) and the total. Synchronized to assure thread safety.
+    /**Updates the display of roll(s) and the total. Synchronized to assure thread safety.
      * @param body String to place on body Label of the display.
      * @param total String to place on total Label of the display.*/
     public synchronized void update(String body, String total) {
@@ -61,7 +61,7 @@ public class DieDisplaySystem extends VerticalGroup {
     }
 
     /** Get specific Label that composes the UI widget.
-     * @param label enum value.
+     * @param label enum value from {@link DiePart}.
      * @return Label*/
     public Label getElement (DiePart label) {
         Label toReturn = null;

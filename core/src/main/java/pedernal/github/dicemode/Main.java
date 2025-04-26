@@ -8,6 +8,8 @@ import pedernal.github.dicemode.modes.Mode;
 import pedernal.github.dicemode.modes.SimpleDieMode;
 
 public class Main extends Game {
+
+
     @Override
     public void create() {
         Gdx.graphics.setContinuousRendering(false);

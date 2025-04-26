@@ -6,19 +6,22 @@ package pedernal.github.dicemode;
 
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Disposable;
-import pedernal.github.dicemode.utilities.Console;
 import pedernal.github.dicemode.utilities.EditDieSystem;
 import pedernal.github.dicemode.utilities.TriPredicate;
+
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 @SuppressWarnings("NewApi")
 public abstract class AbstractDie extends Container<VerticalGroup> implements Disposable {
     private int numberOfFaces;
-    private List<Integer> memory;
+    private final List<Integer> memory;
+    //private AtomicInteger total;
     private int total, limit;
     private final Random randomGenerator = new Random();
     private Skin skin;
@@ -36,16 +39,16 @@ public abstract class AbstractDie extends Container<VerticalGroup> implements Di
     }
 
     /**Method to implement what happens whn child Die is rolled.*/
-    public abstract void roll();
+    public abstract Integer roll() throws InterruptedException, ExecutionException;
 
     /**Method to implement how memory List will be populated, intended to be called in roll().*/
     public abstract void populateMemory();
 
-    /**Method to implement how editDieSystem will modify the die. Method is called by EditDieSystem.select(), so not intended to be called directly, although it's possible to select an instance that way.
-     * @param editDieSystem EditDieSystem object that will select a child instance and edit its values.*/
+    /**Method to implement how editDieSystem will modify the die. Method is called by {@linkplain EditDieSystem#select}, so not intended to be called directly, although it's possible to select an instance that way.
+     * @param editDieSystem {@link EditDieSystem} object that will select a child instance and edit its values.*/
     public abstract void updateFrom(EditDieSystem editDieSystem);
 
-    public int getTotal() {
+    public Integer getTotal() {
         return total;
     }
 
@@ -75,7 +78,7 @@ public abstract class AbstractDie extends Container<VerticalGroup> implements Di
         return numberOfFaces;
     }
 
-    /**@return the CompletableFuture that can/should run concurrently.*/
+    /**@return the CompletableFuture responsible for rolling die concurrently.*/
     public CompletableFuture<String[]> getFuture() {
         return future;
     };
@@ -111,11 +114,9 @@ public abstract class AbstractDie extends Container<VerticalGroup> implements Di
         setLimit(limit, (passedLimit) -> passedLimit <= 0 || passedLimit > 1000, errorMessage);
     }
 
-    /**@param supplier is the callback function to pass to the completable future for it to execute.
-     * @return the CompletableFuture to access its API methods after initialization.*/
-    public CompletableFuture<String[]> setFuture(Supplier<String[]> supplier) {
+    /**@param supplier is the callback function to pass to the completable future for it to execute.*/
+    protected void setFuture(Supplier<String[]> supplier) {
         future = CompletableFuture.supplyAsync(supplier);
-        return future;
     }
 
     /**Adds value to the total.

@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.Align;
 import pedernal.github.dicemode.utilities.*;
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @SuppressWarnings("NewApi")
 public class SimpleDie extends AbstractDie {
@@ -35,14 +36,19 @@ public class SimpleDie extends AbstractDie {
     }
 
     @Override
-    public void roll() {
+    public Integer roll() throws ExecutionException, InterruptedException {
         updateDieDisplay("···"); //set display to "···" before running thread to update the die
 
         getFuture().cancel(true);
+
         setFuture(() -> {
             populateMemory();
             return new String[] {Integer.toString(getTotal())};
-        }).thenAccept( (result) -> Gdx.app.postRunnable(() -> updateDieDisplay(result[0])) );
+        });
+        getFuture().thenAccept( (result) -> Gdx.app.postRunnable(() -> updateDieDisplay(result[0])) );
+        getFuture().get();
+
+        return getTotal();
     }
 
     //Synchronized to assure thread safety
@@ -51,7 +57,7 @@ public class SimpleDie extends AbstractDie {
         try {
             Thread.sleep(50);
         } catch (InterruptedException e) {
-            System.out.println(e);
+            Gdx.app.error("Thread error", e.getClass().getSimpleName()+"; "+e.getMessage());
         }
         getMemory().set(0, getRandomNumber()); //this die only hols one value in memory
         setTotal(getMemory().getFirst());
