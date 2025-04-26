@@ -11,6 +11,7 @@ import pedernal.github.dicemode.utilities.MainMemory.DieConfig;
 import pedernal.github.dicemode.utilities.Modes;
 
 import java.util.LinkedList;
+import java.util.concurrent.CompletableFuture;
 
 public class SimpleDieMode extends Mode {
     private SimpleDie die;
@@ -32,9 +33,6 @@ public class SimpleDieMode extends Mode {
         setRollButton(() -> {
             try {
                 die.roll();
-                /*String result = Integer.toString(die.roll());
-                getConsole().setText("Total: "+result, Color.LIME);
-                Gdx.app.log("Die total", result);*/
             } catch (Exception e) {
                 String errorMessage = e.getMessage();
                 Gdx.app.error("Thread error", e.getClass().getSimpleName()+"; "+errorMessage);

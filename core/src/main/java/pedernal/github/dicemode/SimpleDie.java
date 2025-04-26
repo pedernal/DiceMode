@@ -36,7 +36,7 @@ public class SimpleDie extends AbstractDie {
     }
 
     @Override
-    public Integer roll() throws ExecutionException, InterruptedException {
+    public CompletableFuture<String[]> roll() throws ExecutionException, InterruptedException {
         updateDieDisplay("···"); //set display to "···" before running thread to update the die
 
         getFuture().cancel(true);
@@ -46,9 +46,8 @@ public class SimpleDie extends AbstractDie {
             return new String[] {Integer.toString(getTotal())};
         });
         getFuture().thenAccept( (result) -> Gdx.app.postRunnable(() -> updateDieDisplay(result[0])) );
-        getFuture().get();
 
-        return getTotal();
+        return getFuture();
     }
 
     //Synchronized to assure thread safety

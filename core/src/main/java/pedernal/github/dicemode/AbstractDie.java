@@ -39,7 +39,7 @@ public abstract class AbstractDie extends Container<VerticalGroup> implements Di
     }
 
     /**Method to implement what happens whn child Die is rolled.*/
-    public abstract Integer roll() throws InterruptedException, ExecutionException;
+    public abstract CompletableFuture<String[]> roll() throws InterruptedException, ExecutionException;
 
     /**Method to implement how memory List will be populated, intended to be called in roll().*/
     public abstract void populateMemory();

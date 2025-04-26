@@ -26,7 +26,7 @@ public class DieLoop extends AbstractDie{
     }
 
     @Override
-    public Integer roll() throws ExecutionException, InterruptedException {
+    public CompletableFuture<String[]> roll() throws ExecutionException, InterruptedException {
         dieDisplay.update("       ···", "Total: ···");
 
         getFuture().cancel(true);
@@ -36,9 +36,8 @@ public class DieLoop extends AbstractDie{
             return new String[]{formatMemoryString(), formatTotalString()};
         });
         getFuture().thenAccept( (result) -> Gdx.app.postRunnable(() -> dieDisplay.update(result[0], result[1])) );
-        getFuture().get();
 
-        return getTotal();
+        return getFuture();
     }
 
     @Override
