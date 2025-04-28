@@ -4,14 +4,13 @@ package pedernal.github.dicemode.modes;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import pedernal.github.dicemode.SimpleDie;
+import pedernal.github.dicemode.dice.SimpleDie;
 import pedernal.github.dicemode.Main.MainProgramInterface;
 import pedernal.github.dicemode.utilities.MainMemory;
 import pedernal.github.dicemode.utilities.MainMemory.DieConfig;
 import pedernal.github.dicemode.utilities.Modes;
 
 import java.util.LinkedList;
-import java.util.concurrent.CompletableFuture;
 
 public class SimpleDieMode extends Mode {
     private SimpleDie die;

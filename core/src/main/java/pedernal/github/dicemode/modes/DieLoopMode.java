@@ -4,7 +4,7 @@ package pedernal.github.dicemode.modes;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import pedernal.github.dicemode.DieLoop;
+import pedernal.github.dicemode.dice.DieLoop;
 import pedernal.github.dicemode.Main.MainProgramInterface;
 import pedernal.github.dicemode.utilities.MainMemory;
 import pedernal.github.dicemode.utilities.Modes;

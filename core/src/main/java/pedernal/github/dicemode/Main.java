@@ -4,21 +4,25 @@ package pedernal.github.dicemode;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import pedernal.github.dicemode.modes.Mode;
 import pedernal.github.dicemode.modes.SimpleDieMode;
 
 public class Main extends Game {
-
-
     @Override
     public void create() {
         Gdx.graphics.setContinuousRendering(false);
         Gdx.graphics.requestRendering();
 
         //Implementing interface to expose Mode switching mechanism to Mode types
-        MainProgramInterface mainProgramExp = new MainProgramInterface(){
+        MainProgramInterface mainProgramExp = new MainProgramInterface() {
+            private AssetWell assetWell = new AssetWell();
+
             @Override
             public void switchScreen(Mode mode) {
+                assetWell.load();
+                assetWell.getManager().finishLoading();
+
                 getScreen().dispose();
                 Main.this.setScreen(mode);
             }

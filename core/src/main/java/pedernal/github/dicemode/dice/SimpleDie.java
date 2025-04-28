@@ -2,7 +2,7 @@
  * Roll implements asynchronicity so the roll is done on a separate thread.
  * There will one thread at a time.*/
 
-package pedernal.github.dicemode;
+package pedernal.github.dicemode.dice;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.ui.*;

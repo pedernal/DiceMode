@@ -1,27 +1,27 @@
-/**Class extension of AbstractDie to make a die that will keep rolling until a specific number (limit) is rolled.
+/**Class extension of AbstractDie to make a die that rolls for a given number of times.
  * Roll implements asynchronicity so the roll is done on a separate thread.
  * There will one thread at a time.*/
 
-package pedernal.github.dicemode;
+package pedernal.github.dicemode.dice;
+
+import java.util.ArrayList;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import pedernal.github.dicemode.utilities.*;
-import java.util.LinkedList;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 @SuppressWarnings("NewApi")
-public class DieUntil extends AbstractDie{
+public class DieLoop extends AbstractDie{
     private final DieDisplaySystem dieDisplay;
 
-    public DieUntil(int faces, int target, Skin skin) {
-        super(faces, Math.min(Math.abs(target), faces), new LinkedList<Integer>(), skin);
+    public DieLoop(int faces, int rolls, Skin skin) {
+        super(faces, Math.abs(rolls), new ArrayList<Integer>(rolls), skin);
 
-        String name = "d"+faces+" -> "+target;
+        String name = "d"+faces+" x"+rolls;
         dieDisplay = new DieDisplaySystem(name, skin);
         dieDisplay.update(formatMemoryString(), formatTotalString());
-
         setActor(dieDisplay);
     }
 
@@ -33,7 +33,7 @@ public class DieUntil extends AbstractDie{
 
         setFuture(() -> {
             populateMemory();
-            return new String[] {formatMemoryString(), formatTotalString()};
+            return new String[]{formatMemoryString(), formatTotalString()};
         });
         getFuture().thenAccept( (result) -> Gdx.app.postRunnable(() -> dieDisplay.update(result[0], result[1])) );
 
@@ -44,31 +44,37 @@ public class DieUntil extends AbstractDie{
     public synchronized void populateMemory() {
         setTotal(0);
         getMemory().clear();
-        int currentRoll;
-        do {
-            currentRoll = getRandomNumber();
-            getMemory().add(currentRoll);
-            setTotal(getTotal()+currentRoll);
-        } while (currentRoll != getLimit());
+        for (int i = 0; i < getLimit(); ++i) {
+            int randomNum = getRandomNumber();
+            getMemory().add(randomNum);
+            addToTotal(getMemory().getLast());
+        }
     }
 
     @Override
     public void updateFrom(EditDieSystem editDieSystem) {
         editDieSystem.UISetup().
             facesInput().
-            limitInput("Target").
+            limitInput("Rolls").
             updateButton(() -> {
                 int parsedFacesInput = Integer.parseInt(editDieSystem.getFacesInput());
-                int parsedTargetInput = Integer.parseInt(editDieSystem.getLimitInput());
+                int parsedRollsInput = Integer.parseInt(editDieSystem.getLimitInput());
+                int oldLimit = getLimit();
 
-                //this order call matters, limit range needs to be validated before setting faces
-                String errorMessage = "target cannot be 0 or less or bigger than number of faces";
-                setLimit(parsedTargetInput, (target) -> target <= 0 || target > parsedFacesInput, errorMessage); //condition to invalidate input, if target is 0 or less or bigger than number of dice faces
                 setNumberOfFaces(parsedFacesInput);
+                setLimit(parsedRollsInput);
 
-                dieDisplay.getElement(DiePart.NAME).setText("d"+getNumberOfFaces()+" -> "+getLimit());
+                resetMemoryCapacity(oldLimit, parsedRollsInput);
+
+                dieDisplay.getElement(DiePart.NAME).setText("d"+getNumberOfFaces()+" x"+getLimit());
                 dieDisplay.childrenChanged();
             });
+    }
+
+    private void resetMemoryCapacity(int oldLimit, int newLimit) {
+        if (oldLimit < newLimit) {
+            ((ArrayList<Integer>) getMemory()).ensureCapacity(newLimit);
+        }
     }
 
     @Override

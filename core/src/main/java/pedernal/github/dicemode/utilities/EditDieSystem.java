@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import pedernal.github.dicemode.AbstractDie;
+import pedernal.github.dicemode.dice.AbstractDie;
 
 import java.util.function.Consumer;
 

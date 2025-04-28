@@ -2,7 +2,7 @@
  * The VerticalGroup is intended to be an instance of DiceDisplaySystem.
  * Implements randomness, a List to remember rolls (for iterative rolls) and a total from all rolls.**/
 
-package pedernal.github.dicemode;
+package pedernal.github.dicemode.dice;
 
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Disposable;
@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
