@@ -34,7 +34,6 @@ public class AssetWell implements Disposable {
         new AssetDescriptor<>(skinPath, Skin.class, new SkinLoader.SkinParameter(skinAtlasPath));
 
     private FreeTypeFontLoaderParameter notoMonoParam, bigNotoMonoParam, notoConsoleParam;
-    private Skin skin;
 
     public AssetWell() {
         manager = new AssetManager();
@@ -50,7 +49,6 @@ public class AssetWell implements Disposable {
         assetPaths.put(AssetID.FONT_CONSOLE, "NotoConsole");
 
         //setting freetype font parameters
-        //String fontFile = "NotoSansMono-Bold.ttf";
         notoMonoParam = generateFontParam(fontPath, 12, Color.DARK_GRAY, true);
         bigNotoMonoParam = generateFontParam(fontPath, 40, Color.DARK_GRAY, true);
         notoConsoleParam = generateFontParam(fontPath, 10, Color.WHITE, false);
