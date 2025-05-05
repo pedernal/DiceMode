@@ -5,28 +5,43 @@ package pedernal.github.dicemode;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import pedernal.github.dicemode.modes.DieLoopMode;
 import pedernal.github.dicemode.modes.Mode;
 import pedernal.github.dicemode.modes.SimpleDieMode;
 
 public class Main extends Game {
+    private AssetWell assetWell;
+
     @Override
     public void create() {
         Gdx.graphics.setContinuousRendering(false);
         Gdx.graphics.requestRendering();
 
+        assetWell = new AssetWell();
         //Implementing interface to expose Mode switching mechanism to Mode types
         MainProgramInterface mainProgramExp = new MainProgramInterface() {
-            private AssetWell assetWell = new AssetWell();
 
             @Override
             public void switchScreen(Mode mode) {
-                assetWell.load();
-                assetWell.getManager().finishLoading();
+                try {
+                    assetWell.load();
+                    assetWell.getManager().finishLoading();
 
-                getScreen().dispose();
-                Main.this.setScreen(mode);
+                    getScreen().dispose();
+                    Main.this.setScreen(mode);
+                } catch (Exception e) {
+                    Gdx.app.error("AssetManager", "At switching screen; "+e.getMessage());
+                }
+            }
+
+            @Override
+            public AssetWell getAssetWell() {
+                return assetWell;
             }
         };
+
+        assetWell.load();
+        assetWell.getManager().finishLoading();
         this.setScreen(new SimpleDieMode(mainProgramExp));
     }
 
@@ -42,11 +57,13 @@ public class Main extends Game {
 
     @Override
     public void dispose() {
+        assetWell.dispose();
     }
 
     /**Interface to implement how Mods will change.*/
     public interface MainProgramInterface {
         /**@param mode a new instance of a Mode.*/
         void switchScreen(Mode mode);
+        public AssetWell getAssetWell();
     }
 }

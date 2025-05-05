@@ -6,9 +6,9 @@ package pedernal.github.dicemode.dice;
 
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Disposable;
+import pedernal.github.dicemode.AssetWell;
 import pedernal.github.dicemode.utilities.EditDieSystem;
 import pedernal.github.dicemode.utilities.TriPredicate;
-
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
@@ -20,20 +20,19 @@ import java.util.function.Supplier;
 public abstract class AbstractDie extends Container<VerticalGroup> implements Disposable {
     private int numberOfFaces;
     private final List<Integer> memory;
-    //private AtomicInteger total;
     private int total, limit;
     private final Random randomGenerator = new Random();
-    private Skin skin;
+    private AssetWell assetWell;
     private CompletableFuture<String[]> future;
     private final TriPredicate<Integer, Integer, Integer> predicate = (Integer i, Integer size, Integer element) -> true; //predicate lambda exp for the default behavior of formatMemoryString()
 
-    public AbstractDie(int numberOfFaces, int limit, List<Integer> memory, Skin skin) {
+    public AbstractDie(int numberOfFaces, int limit, List<Integer> memory, AssetWell assetWell) {
         super();
         this.numberOfFaces = numberOfFaces;
         total = 0;
         this.limit = limit;
         this.memory = memory;
-        this.skin = skin;
+        this.assetWell = assetWell;
         future = new CompletableFuture<String[]>();
     }
 
@@ -68,8 +67,8 @@ public abstract class AbstractDie extends Container<VerticalGroup> implements Di
     }
 
     /**@return skin used by the die for UI.*/
-    public Skin getSkin() {
-        return skin;
+    public AssetWell getAssetWell() {
+        return assetWell;
     }
 
     /**@return the number of faces of the die.*/
@@ -177,5 +176,7 @@ public abstract class AbstractDie extends Container<VerticalGroup> implements Di
 
     /**Method for things to dispose of*/
     @Override
-    public void dispose() {}
+    public void dispose() {
+        future.cancel(true);
+    }
 }

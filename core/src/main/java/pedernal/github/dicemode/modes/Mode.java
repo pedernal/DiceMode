@@ -5,9 +5,7 @@ package pedernal.github.dicemode.modes;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -18,21 +16,17 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
+import pedernal.github.dicemode.AssetWell;
 import pedernal.github.dicemode.Main.MainProgramInterface;
 import pedernal.github.dicemode.utilities.Console;
 import pedernal.github.dicemode.utilities.EditDieSystem;
-
+import pedernal.github.dicemode.AssetWell.AssetID;
 import java.util.function.Supplier;
 
 public class Mode implements Screen {
     private final MainProgramInterface mainProgram;
     private final Stage stage;
     private Table table;
-    private Skin skin;
     private final EditDieSystem editDieSystem;
     private TextButton rollButton;
     private final ModeChanger modeChanger;
@@ -44,22 +38,11 @@ public class Mode implements Screen {
         //stage = new Stage(new ScreenViewport());
         stage = new Stage(new ExtendViewport(400, 640));
 
-        skin = new Skin(Gdx.files.internal("./skin/clean-crispy-ui.json"));
-        //setup skin stuff
-        TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("./skin/clean-crispy-ui.atlas"));
-        skin.addRegions(atlas);
-            //Generate fonts to add to skin
-        FileHandle fileHandle = Gdx.files.internal("./NotoSansMono-Bold.ttf");
-        FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(fileHandle);
-        skin.add( "NotoMono", fontGenerator.generateFont(varyFontSize(12, Color.DARK_GRAY, true)) );
-        skin.add( "BigNotoMono", fontGenerator.generateFont(varyFontSize(40, Color.DARK_GRAY, true)) );
-        skin.add( "NotoConsole", fontGenerator.generateFont(varyFontSize(10, Color.WHITE, false)) );
-        fontGenerator.dispose();
-
         table = new Table();
         table.setFillParent(true);
 
-        console = new Console(skin);
+        Skin skin = mainProgram.getAssetWell().get(AssetID.SKIN, Skin.class);
+        console = new Console(mainProgram.getAssetWell());
         editDieSystem = new EditDieSystem(console, skin);
         rollButton = new TextButton("Roll", skin);
         modeChanger = new ModeChanger(skin);
@@ -119,8 +102,8 @@ public class Mode implements Screen {
     /**@return the exposed interface methods from the main the program ({@link MainProgramInterface}).*/
     public MainProgramInterface getMainProgram() { return mainProgram; }
 
-    /**@return the skin used for the UI elements.*/
-    public Skin getSkin() { return skin; }
+    /**@return the {@link AssetWell} used for the UI elements.*/
+    public AssetWell getAssetWell() { return mainProgram.getAssetWell(); }
 
     /**@return the main table that holds all the UI elements.*/
     public Table getTable() { return table; }
@@ -146,25 +129,10 @@ public class Mode implements Screen {
         });
     }
 
-    /**Helper method to generate font parameters with arbitrary size, color and bevel effect
-     * @param size the size that the font will be
-     * @param color the color the font will be
-     * @param addBevel if true, will add a bevel like effect to the font*/
-    private FreeTypeFontParameter varyFontSize(int size, Color color, boolean addBevel) {
-        FreeTypeFontParameter parameter = new FreeTypeFontParameter();
-        parameter.size = size;
-        parameter.color = color;
-        if (addBevel) {
-            parameter.shadowColor = Color.WHITE;
-            parameter.shadowOffsetY = 2;
-        }
-        return parameter;
-    }
-
     /**Things to dispose of*/
     @Override
     public void dispose() {
         stage.dispose();
-        skin.dispose();
+        //skin.dispose();
     }
 }

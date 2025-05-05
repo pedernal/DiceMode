@@ -3,19 +3,23 @@
 package pedernal.github.dicemode.utilities;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import pedernal.github.dicemode.AssetWell;
+import pedernal.github.dicemode.AssetWell.AssetID;
 
 public class Console extends Container<ScrollPane> {
     private Label label;
 
-    public Console(Skin skin) {
+    public Console(AssetWell assetWell) {
         super();
+        Skin skin = assetWell.get(AssetID.SKIN, Skin.class);
         LabelStyle labelStyle = new LabelStyle(skin.get(LabelStyle.class));
-        labelStyle.font = skin.getFont("NotoConsole");
+        labelStyle.font = assetWell.get(AssetID.FONT_CONSOLE, BitmapFont.class);
         label = new Label("", labelStyle);
         ScrollPane scrollPane = new ScrollPane(label);
         scrollPane.setFadeScrollBars(false);

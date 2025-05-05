@@ -5,8 +5,10 @@
 package pedernal.github.dicemode.dice;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Align;
+import pedernal.github.dicemode.AssetWell;
 import pedernal.github.dicemode.utilities.*;
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
@@ -16,16 +18,16 @@ import java.util.concurrent.ExecutionException;
 public class SimpleDie extends AbstractDie {
     private final DieDisplaySystem dieDisplay;
 
-    public SimpleDie(int numberOfFaces, Skin skin) {
-        super(numberOfFaces, 1, new ArrayList<Integer>(), skin);
+    public SimpleDie(int numberOfFaces, AssetWell assetWell) {
+        super(numberOfFaces, 1, new ArrayList<Integer>(), assetWell);
 
-        dieDisplay = new DieDisplaySystem("d"+numberOfFaces, skin, 130, 104);
+        dieDisplay = new DieDisplaySystem("d"+numberOfFaces, assetWell, 130, 104);
         getMemory().add(numberOfFaces);
         setTotal(numberOfFaces);
 
         //setting up unique style from skin for the labels' elements (increasing font size on body Label)
         Label.LabelStyle labelStyle = new Label.LabelStyle(dieDisplay.getElement(DiePart.BODY).getStyle()); //clone LabelStyle
-        labelStyle.font = skin.getFont("BigNotoMono");
+        labelStyle.font = assetWell.get(AssetWell.AssetID.FONT_BIG, BitmapFont.class);
 
         dieDisplay.getElement(DiePart.BODY).setStyle(labelStyle);
         dieDisplay.getElement(DiePart.BODY).setAlignment(Align.center);
@@ -81,8 +83,8 @@ public class SimpleDie extends AbstractDie {
         dieDisplay.update(content, "");
     }
 
-    @Override
+    /*@Override
     public void dispose() {
         getFuture().cancel(true);
-    }
+    }*/
 }

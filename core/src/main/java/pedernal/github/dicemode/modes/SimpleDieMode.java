@@ -21,9 +21,9 @@ public class SimpleDieMode extends Mode {
         //Create die with data from memory, else declare default die
         LinkedList<DieConfig> dieConfigs = MainMemory.INSTANCE.getDieConfigs(Modes.SIMPLE_DIE_MODE);
         die = (!dieConfigs.isEmpty())?
-            new SimpleDie(dieConfigs.getFirst().numberOfFaces, getSkin())
+            new SimpleDie(dieConfigs.getFirst().numberOfFaces, getAssetWell())
             :
-            new SimpleDie(6, getSkin());
+            new SimpleDie(6, getAssetWell());
     }
 
     @Override

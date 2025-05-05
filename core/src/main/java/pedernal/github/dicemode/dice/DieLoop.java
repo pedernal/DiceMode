@@ -7,20 +7,20 @@ package pedernal.github.dicemode.dice;
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import pedernal.github.dicemode.AssetWell;
 import pedernal.github.dicemode.utilities.*;
 
 @SuppressWarnings("NewApi")
 public class DieLoop extends AbstractDie{
     private final DieDisplaySystem dieDisplay;
 
-    public DieLoop(int faces, int rolls, Skin skin) {
-        super(faces, Math.abs(rolls), new ArrayList<Integer>(rolls), skin);
+    public DieLoop(int faces, int rolls, AssetWell assetWell) {
+        super(faces, Math.abs(rolls), new ArrayList<Integer>(rolls), assetWell);
 
         String name = "d"+faces+" x"+rolls;
-        dieDisplay = new DieDisplaySystem(name, skin);
+        dieDisplay = new DieDisplaySystem(name, assetWell);
         dieDisplay.update(formatMemoryString(), formatTotalString());
         setActor(dieDisplay);
     }
@@ -77,8 +77,8 @@ public class DieLoop extends AbstractDie{
         }
     }
 
-    @Override
+    /*@Override
     public void dispose() {
         getFuture().cancel(true);
-    }
+    }*/
 }

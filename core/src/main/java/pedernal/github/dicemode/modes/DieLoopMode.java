@@ -20,9 +20,9 @@ public class DieLoopMode extends Mode {
         //Create die with data from memory, else declare default die
         LinkedList<MainMemory.DieConfig> dieConfigs = MainMemory.INSTANCE.getDieConfigs(Modes.DIE_LOOP_MODE);
         die = (!dieConfigs.isEmpty())?
-            new DieLoop(dieConfigs.getFirst().numberOfFaces, dieConfigs.getFirst().limit, getSkin())
+            new DieLoop(dieConfigs.getFirst().numberOfFaces, dieConfigs.getFirst().limit, getAssetWell())
             :
-            new DieLoop(6, 4, getSkin());
+            new DieLoop(6, 4, getAssetWell());
     }
 
     @Override

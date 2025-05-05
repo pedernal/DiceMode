@@ -21,9 +21,9 @@ public class DieUntilMode extends Mode {
         //Create die with data from memory, else declare default die
         LinkedList<DieConfig> dieConfigs = MainMemory.INSTANCE.getDieConfigs(Modes.DIE_UNTIL_MODE);
         die = (!dieConfigs.isEmpty())?
-            new DieUntil(dieConfigs.getFirst().numberOfFaces, dieConfigs.getFirst().limit, getSkin())
+            new DieUntil(dieConfigs.getFirst().numberOfFaces, dieConfigs.getFirst().limit, getAssetWell())
             :
-            new DieUntil(6, 1, getSkin());
+            new DieUntil(6, 1, getAssetWell());
     }
 
     @Override

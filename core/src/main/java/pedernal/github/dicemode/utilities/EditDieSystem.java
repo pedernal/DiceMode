@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import pedernal.github.dicemode.AssetWell;
 import pedernal.github.dicemode.dice.AbstractDie;
 
 import java.util.function.Consumer;
@@ -24,8 +25,10 @@ public class EditDieSystem {
     private TextButton updateButton;
     private Console console;
     private ButtonSetupInterface buttonSetup;
+    private Skin skin;
 
-    public EditDieSystem(Console console, Skin skin) {
+    public EditDieSystem(Console console,  Skin skin) {
+        this.skin = skin;
         selected = null;
         subTalbe = new Table();
         subTalbe.setVisible(false);
@@ -135,8 +138,9 @@ public class EditDieSystem {
 
     /**If a die has been selected, visually highlights it.*/
     public void highlight() {
+        //Skin skin = selected.getAssetWell().get(AssetWell.AssetID.SKIN, Skin.class);
         if (selected != null) {
-            Drawable background = selected.getSkin().newDrawable("color", Color.CYAN);
+            Drawable background = skin.newDrawable("color", Color.CYAN);
             selected.setBackground(background);
             selected.getActor().pad(2);
         }

@@ -6,6 +6,7 @@ package pedernal.github.dicemode.dice;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import pedernal.github.dicemode.AssetWell;
 import pedernal.github.dicemode.utilities.*;
 import java.util.LinkedList;
 import java.util.concurrent.CompletableFuture;
@@ -15,11 +16,11 @@ import java.util.concurrent.ExecutionException;
 public class DieUntil extends AbstractDie{
     private final DieDisplaySystem dieDisplay;
 
-    public DieUntil(int faces, int target, Skin skin) {
-        super(faces, Math.min(Math.abs(target), faces), new LinkedList<Integer>(), skin);
+    public DieUntil(int faces, int target, AssetWell assetWell) {
+        super(faces, Math.min(Math.abs(target), faces), new LinkedList<Integer>(), assetWell);
 
         String name = "d"+faces+" -> "+target;
-        dieDisplay = new DieDisplaySystem(name, skin);
+        dieDisplay = new DieDisplaySystem(name, assetWell);
         dieDisplay.update(formatMemoryString(), formatTotalString());
 
         setActor(dieDisplay);
@@ -71,8 +72,8 @@ public class DieUntil extends AbstractDie{
             });
     }
 
-    @Override
+    /*@Override
     public void dispose() {
         getFuture().cancel(true);
-    }
+    }*/
 }

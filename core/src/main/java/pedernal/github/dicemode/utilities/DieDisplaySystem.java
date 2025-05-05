@@ -2,34 +2,38 @@
 
 package pedernal.github.dicemode.utilities;
 
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
+import pedernal.github.dicemode.AssetWell;
+import pedernal.github.dicemode.AssetWell.AssetID;
 
 import java.util.EnumMap;
 
 public class DieDisplaySystem extends VerticalGroup {
     private final EnumMap<DiePart, Container<Actor>> elements;
-    private Skin skin;
+    private AssetWell assetWell;
     private ScrollPane scrollPane;
 
-    public DieDisplaySystem(String name, Skin skin, float width, float height) {
+    public DieDisplaySystem(String name, AssetWell assetWell, float width, float height) {
         super();
-        this.skin = skin;
+        this.assetWell = assetWell;
         elements = new EnumMap<DiePart, Container<Actor>>(DiePart.class);
 
         //setting up unique style from skin for the labels' elements (adding background to these labels)
-        Drawable labelBackground = this.skin.newDrawable("tooltip-c");
-        Label.LabelStyle labelStyle = new Label.LabelStyle(this.skin.get(Label.LabelStyle.class)); //clone LabelStyle from skin
+        Skin skin = assetWell.get(AssetID.SKIN, Skin.class);
+        Drawable labelBackground = skin.newDrawable("tooltip-c");
+        Label.LabelStyle labelStyle = new Label.LabelStyle(skin.get(Label.LabelStyle.class)); //clone LabelStyle from skin
         labelStyle.background = labelBackground;
-        labelStyle.font = this.skin.getFont("NotoMono");
+        labelStyle.font = assetWell.get(AssetID.FONT_MONO, BitmapFont.class);
 
         Label nameLabel = new Label(name, labelStyle);
         nameLabel.setAlignment(Align.center);
         elements.put(DiePart.NAME, new Container<Actor>(nameLabel));
         System.out.println();
-        scrollPane = new ScrollPane(new Label("", labelStyle), this.skin);
+        scrollPane = new ScrollPane(new Label("", labelStyle), skin);
         scrollPane.setFadeScrollBars(false);
         elements.put(DiePart.BODY, new Container<Actor>(scrollPane));
         elements.put(DiePart.TOTAL, new Container<Actor>(
@@ -43,8 +47,8 @@ public class DieDisplaySystem extends VerticalGroup {
         elements.values().forEach((container) -> addActor(container));
         //this.pad(2);
     }
-    public DieDisplaySystem(String name, Skin skin) {
-        this(name, skin, 130, 100);
+    public DieDisplaySystem(String name, AssetWell assetWell) {
+        this(name, assetWell, 130, 100);
     }
 
     /**Updates the display of roll(s) and the total. Synchronized to assure thread safety.
